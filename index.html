@@ -846,12 +846,12 @@
     let firebaseInitialized = false;
     
     const DEFAULT_CATEGORIES = [
-        { name: '吧唧', subs: [] },
-        { name: '亚克力', subs: [] },
-        { name: '滴胶', subs: [] },
-        { name: '色纸', subs: [] },
-        { name: '本子', subs: [] },
-        { name: '其他', subs: [] }
+        { name: '万花', subs: [] },
+        { name: '天策', subs: [] },
+        { name: '纯阳', subs: [] },
+        { name: '少林', subs: [] },
+        { name: '七秀', subs: [] },
+        { name: '藏剑', subs: [] }
     ];
 
     // ==================== 新增：蓝牙打印机相关 ====================
@@ -870,9 +870,9 @@
             }
             
             updateStatus('正在搜索蓝牙打印机...');
-            const device = await navigator.bluetooth.requestDevice({
-                filters: [{ services: [PRINT_SERVICE_UUID] }],
-                optionalServices: [PRINT_SERVICE_UUID]
+           const device = await navigator.bluetooth.requestDevice({
+           acceptAllDevices: true,
+           optionalServices: [PRINT_SERVICE_UUID]
             });
             
             updateStatus('正在连接打印机...');
