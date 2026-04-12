@@ -597,11 +597,6 @@
                 white-space: nowrap;
                 flex-shrink: 0;
             }
-            /* 数据按钮保持原有颜色 */
-            .header-buttons .data-btn {
-                background-color: white;
-                color: var(--text-color);
-            }
             .status-bar {
                 padding: 5px 12px;
                 font-size: 0.7rem;
@@ -631,12 +626,10 @@
 <header>
     <h1>🐱 玦泥泥猫屎宝</h1>
     <div class="header-buttons">
-        <!-- 四个数据按钮移到此处，位于查看订单左侧 -->
-        <button onclick="exportData()" title="导出数据" style="background-color: white; color: #5d4037;">💾 导出</button>
-        <button onclick="importData()" title="导入数据" style="background-color: white; color: #5d4037;">📂 导入</button>
+        <button onclick="exportData()" title="导出数据">💾 导出</button>
+        <button onclick="importData()" title="导入数据">📂 导入</button>
         <button onclick="manualSyncToFirebase()" title="同步到云端" style="background-color: #e3f2fd; color: #1976d2;">🔄 同步</button>
         <button onclick="clearAllData()" title="清空所有数据" style="background-color: #ffebee; color: #d32f2f;">🗑️ 清空</button>
-        <!-- 原有按钮 -->
         <button onclick="showOrders()">🐱 查看订单</button>
         <button onclick="openModal('manageModal')">🐱 咪咪管理</button>
     </div>
@@ -644,7 +637,6 @@
 
 <div class="status-bar" id="db-status">
     <span id="status-text">正在连接数据库...</span>
-    <!-- 状态栏右侧留空，原数据按钮已移走 -->
     <div></div>
 </div>
 
@@ -678,17 +670,11 @@
 </div>
 
 <!-- 模态框区域 (为节省篇幅省略具体内容，实际使用时请包含完整模态框) -->
-<!-- 添加商品 Modal -->
 <div id="addModal" class="modal">...</div>
-<!-- 编辑商品 Modal -->
 <div id="editModal" class="modal">...</div>
-<!-- 管理 Modal -->
 <div id="manageModal" class="modal">...</div>
-<!-- 分类管理 Modal -->
 <div id="categoryManageModal" class="modal">...</div>
-<!-- 订单确认 Modal -->
 <div id="confirmModal" class="modal">...</div>
-<!-- 订单历史 Modal -->
 <div id="ordersModal" class="modal">...</div>
 
 <script>
@@ -1033,7 +1019,7 @@
     }
     async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
 
-    // 蓝牙打印 (使用内嵌库)
+    // 蓝牙打印 (使用内嵌库) - 修改小票格式
     async function connectPrinter() {
         if(!navigator.bluetooth) throw new Error('浏览器不支持Web Bluetooth');
         updateStatus('搜索蓝牙打印机...');
@@ -1054,16 +1040,43 @@
             return printerCharacteristic;
         }
     }
+    // 修改后的小票格式
     function generateReceiptData(orderInfo) {
         const encoder = new EscPosEncoder();
-        let result = encoder.initialize().codepage('utf8').align('center').line('玦泥泥猫屎宝').line('================').align('left');
-        if(orderInfo.orderNo) { result.line(`订单号: ${orderInfo.orderNo}`); result.line(`时间: ${orderInfo.time || new Date().toLocaleString()}`); result.line('----------------'); }
-        result.line('商品           数量  小计');
+        let result = encoder
+            .initialize()
+            .codepage('utf8')
+            .align('center')
+            .line('《玦泥泥小猫饭屋》')      // 新店名
+            .line('--------------------------------') // 虚线分割
+            .align('left');
+        
+        if(orderInfo.orderNo) {
+            result.line(`订单号: ${orderInfo.orderNo}`);
+            result.line(`时间: ${orderInfo.time || new Date().toLocaleString()}`);
+            result.line('--------------------------------'); // 虚线分割
+        }
+        
+        // 商品明细：格式为 "商品名 x数量  价格"
         orderInfo.items.forEach(item => {
-            let name = item.name.length > 8 ? item.name.substring(0,6)+'..' : item.name.padEnd(8,' ');
-            result.line(`${name}  ${item.quantity.toString().padStart(3)}  ¥${item.total.toFixed(2)}`);
+            const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
+            const qty = `x${item.quantity}`;
+            const price = `¥${item.total.toFixed(2)}`;
+            // 计算空格使价格右对齐 (50mm约32字符)
+            const leftPart = `${name} ${qty}`;
+            const spaces = Math.max(1, 32 - leftPart.length - price.length);
+            const line = leftPart + ' '.repeat(spaces) + price;
+            result.line(line);
         });
-        result.line('----------------').align('right').line(`总计: ¥${orderInfo.total.toFixed(2)}`).align('center').line('感谢惠顾！').line(' ').cut();
+        
+        result.line('--------------------------------') // 虚线分割
+              .align('right')
+              .line(`总计: ¥${orderInfo.total.toFixed(2)}`)
+              .align('center')
+              .line('感谢惠顾！')
+              .line(' ')
+              .cut();
+        
         return result.encode();
     }
     async function printCurrentCart() {
