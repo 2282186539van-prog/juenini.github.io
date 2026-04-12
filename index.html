@@ -1159,8 +1159,8 @@
             .initialize()
             .codepage('utf8')
             .align('center')
-            .line('《玦泥泥小猫饭屋》')
-            .line('--------------------------------')
+            .line("《猫饭屋》")
+            .line("---------------------------")
             .align('left');
         
         if(orderInfo.orderNo) {
@@ -1183,7 +1183,7 @@
               .align('right')
               .line(`总计: ¥${orderInfo.total.toFixed(2)}`)
               .align('center')
-              .line('感谢惠顾！')
+              .line("谢谢惠顾！")
               .line(' ')
               .cut();
         
