@@ -592,63 +592,62 @@
     // ==================== 核心 GBK 打印模块 (完整映射表) ====================
     // 压缩的 GBK 映射表 (Base64)
     const GBK_BASE64 = `...`; // 此处因长度限制用省略号表示，实际使用时请替换为下方提供的完整Base64字符串
-    
-    // 解码并构建映射表
     const gbkBytesMap = (() => {
         return new Map();
     })();
 
-    const customGbkMap = new Map([
+    // ==================== 精简 GBK 映射表（包含所有已知需打印字符） ====================
+const customGbkMap = new Map([
     // === 店名及固定文案 ===
-    ['《', 0xA1B6],['我', 0xCED2], ['在', 0xD4DA], ['屎', 0xCABA],['坑', 0xB0BC],['很', 0xBAD8], ['想', 0xCFEB], ['你', 0xC4E3], ['》', 0xA1B7],
+    ['《', 0xA1B6], ['我', 0xCED2], ['在', 0xD4DA], ['猫', 0xC3A8], ['屎', 0xCABA],
+    ['坑', 0xB0BC], ['很', 0xBAD8], ['想', 0xCFEB], ['你', 0xC4E3], ['》', 0xA1B7],
     ['订', 0xB6A9], ['单', 0xB5A5], ['号', 0xBAC5], ['时', 0xCAB1], ['间', 0xBCE4],
     ['感', 0xB8D0], ['谢', 0xD0BB], ['惠', 0xBBDD], ['顾', 0xB9CB], ['！', 0xA3A1],
     ['总', 0xD7DC], ['计', 0xBCC6], ['：', 0xA3BA],
-    
-    // === 商品名称中出现的汉字（根据您截图中的内容整理） ===
-    ['万', 0xCDF2], ['花', 0xBBA8], ['天', 0xCCEC], ['策', 0xB2DF], ['纯', 0xB4BF], ['阳', 0xD1F4],
-    ['七', 0xC6DF], ['秀', 0xD0E3], ['藏', 0xB2D8], ['剑', 0xBDA3], ['五', 0xCEE5], ['毒', 0xB6BE],
-    ['唐', 0xCCC6], ['门', 0xC3C5], ['明', 0xC3F7], ['教', 0xBDCC], ['丐', 0xD8A4], ['帮', 0xB0EF],
-    ['苍', 0xB2D4], ['云', 0xD4C6], ['长', 0xB3A4], ['歌', 0xB8E8], ['霸', 0xB0D4], ['刀', 0xB5B6],
-    ['蓬', 0xC5EE], ['莱', 0xC0B3], ['凌', 0xC1E8], ['霄', 0xCFF6], ['阁', 0xB8F3], ['衍', 0xD1DC],
-    ['宗', 0xD7DA], ['北', 0xB1B1], ['药', 0xD2A9], ['万', 0xCDF2], ['灵', 0xC1E9], ['山', 0xC9BD],
-    ['庄', 0xD7AF], ['生', 0xC9FA], ['一', 0xD2BB], ['枪', 0xC7B9], ['晨', 0xB3BF], ['曦', 0xEAAB],
-    ['其', 0xC6E4], ['他', 0xCBFB], ['气', 0xC6F8], ['囊', 0xC4D2],
-    
-    // === 商品名中可能出现的其他字 ===
-    ['钥', 0xD4BF], ['匙', 0xB3D7], ['扣', 0xBFDB], ['支', 0xD6A7], ['架', 0xBCDC], ['立', 0xC1A2], ['牌', 0xC5C6],
-    ['测', 0xB2E2], ['试', 0xCAD4],
-    
-    // === 数字和符号 (0-9, 空格, 点, 横线等已在 ASCII 范围内，无需映射) ===
-    // ASCII 范围内的字符（包括英文、数字、常见符号）在 strToGbkBytes 中直接按单字节处理
+
+    // === 门派名称 ===
+    ['万', 0xCDF2], ['花', 0xBBA8], ['天', 0xCCEC], ['策', 0xB2DF], ['纯', 0xB4BF],
+    ['阳', 0xD1F4], ['七', 0xC6DF], ['秀', 0xD0E3], ['藏', 0xB2D8], ['剑', 0xBDA3],
+    ['五', 0xCEE5], ['毒', 0xB6BE], ['唐', 0xCCC6], ['门', 0xC3C5], ['明', 0xC3F7],
+    ['教', 0xBDCC], ['丐', 0xD8A4], ['帮', 0xB0EF], ['苍', 0xB2D4], ['云', 0xD4C6],
+    ['长', 0xB3A4], ['歌', 0xB8E8], ['霸', 0xB0D4], ['刀', 0xB5B6], ['蓬', 0xC5EE],
+    ['莱', 0xC0B3], ['凌', 0xC1E8], ['霄', 0xCFF6], ['阁', 0xB8F3], ['衍', 0xD1DC],
+    ['宗', 0xD7DA], ['北', 0xB1B1], ['药', 0xD2A9], ['灵', 0xC1E9], ['山', 0xC9BD],
+    ['庄', 0xD7AF], ['生', 0xC9FA], ['一', 0xD2BB], ['枪', 0xC7B9], ['晨', 0xB3BF],
+    ['曦', 0xEAAB], ['其', 0xC6E4], ['他', 0xCBFB], ['气', 0xC6F8], ['囊', 0xC4D2],
+
+    // === 商品常用字 ===
+    ['钥', 0xD4BF], ['匙', 0xB3D7], ['扣', 0xBFDB], ['支', 0xD6A7], ['架', 0xBCDC],
+    ['立', 0xC1A2], ['牌', 0xC5C6], ['测', 0xB2E2], ['试', 0xCAD4],
+
+    // === 新增字段（剑纯日记、归鞘、打卡棒、动物、贴纸包、甜蜜夏日、窗花贴、便签本） ===
+    ['日', 0xC8D5], ['记', 0xBCC7], ['归', 0xB9E9], ['鞘', 0xC7CA], ['打', 0xB4F2],
+    ['卡', 0xBFA8], ['棒', 0xB0F4], ['动', 0xB6AF], ['物', 0xCEEF], ['贴', 0xCCF9],
+    ['纸', 0xD6BD], ['包', 0xB0FC], ['甜', 0xCCF0], ['蜜', 0xC3DB], ['夏', 0xCFC4],
+    ['窗', 0xB4B0], ['便', 0xB1E3], ['签', 0xC7A9],
 ]);
 
 /**
  * 将字符串转换为 GBK 字节数组
- * @param {string} str - 待转换的字符串
- * @returns {Uint8Array} GBK 编码的字节数组
  */
 function strToGbkBytes(str) {
     const result = [];
     for (let i = 0; i < str.length; i++) {
         const char = str[i];
         const code = char.charCodeAt(0);
-        
-        // ASCII 字符（0x00-0x7F）直接保留
+
+        // ASCII 字符直接保留
         if (code <= 0x7F) {
             result.push(code);
             continue;
         }
-        
-        // 查询自定义映射表
+
         const gbk = customGbkMap.get(char);
         if (gbk !== undefined) {
-            // GBK 双字节，高位在前
             result.push((gbk >> 8) & 0xFF);
             result.push(gbk & 0xFF);
         } else {
-            // 若遇到未映射的字符，用空格替代，并可在控制台输出警告以便添加
-            console.warn(`[打印] 字符 "${char}" (Unicode: ${code.toString(16)}) 未在映射表中，已替换为空格`);
+            console.warn(`[打印] 字符 "${char}" (U+${code.toString(16).toUpperCase()}) 未映射，已替换为空格。`);
             result.push(0x20);
         }
     }
@@ -660,19 +659,19 @@ function strToGbkBytes(str) {
  */
 function generateReceiptData(orderInfo) {
     const buffers = [];
-    
+
     // 初始化打印机
     buffers.push(new Uint8Array([0x1B, 0x40]));
     // 进入汉字模式
     buffers.push(new Uint8Array([0x1C, 0x26]));
-    
-    // 居中
+
+    // 居中 - 店名（已更新）
     buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
     buffers.push(strToGbkBytes('《我在猫屎坑很想你》'));
     buffers.push(new Uint8Array([0x0A]));
     buffers.push(strToGbkBytes('--------------------------------'));
     buffers.push(new Uint8Array([0x0A]));
-    
+
     // 左对齐
     buffers.push(new Uint8Array([0x1B, 0x61, 0x00]));
     if (orderInfo.orderNo) {
@@ -683,7 +682,7 @@ function generateReceiptData(orderInfo) {
         buffers.push(strToGbkBytes('--------------------------------'));
         buffers.push(new Uint8Array([0x0A]));
     }
-    
+
     // 商品明细
     orderInfo.items.forEach(item => {
         const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
@@ -695,25 +694,25 @@ function generateReceiptData(orderInfo) {
         buffers.push(strToGbkBytes(line));
         buffers.push(new Uint8Array([0x0A]));
     });
-    
+
     buffers.push(strToGbkBytes('--------------------------------'));
     buffers.push(new Uint8Array([0x0A]));
-    
+
     // 右对齐总计
     buffers.push(new Uint8Array([0x1B, 0x61, 0x02]));
     buffers.push(strToGbkBytes(`总计: ¥${orderInfo.total.toFixed(2)}`));
     buffers.push(new Uint8Array([0x0A]));
-    
+
     // 居中感谢语
     buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
     buffers.push(strToGbkBytes('感谢惠顾！'));
     buffers.push(new Uint8Array([0x0A]));
     buffers.push(strToGbkBytes(' '));
     buffers.push(new Uint8Array([0x0A]));
-    
+
     // 切纸
     buffers.push(new Uint8Array([0x1D, 0x56, 0x00]));
-    
+
     // 合并所有buffer
     const totalLength = buffers.reduce((sum, buf) => sum + buf.length, 0);
     const result = new Uint8Array(totalLength);
@@ -723,6 +722,62 @@ function generateReceiptData(orderInfo) {
         offset += buf.length;
     }
     return result;
+}
+
+// ==================== 蓝牙连接与打印函数（请确保与您的变量衔接） ====================
+// 以下函数依赖于您已定义的全局变量：PRINT_SERVICE_UUID, PRINT_CHARACTERISTIC_UUID,
+// printerCharacteristic, updateStatus, products, cart 等。
+
+async function connectPrinter() {
+    if (!navigator.bluetooth) throw new Error('浏览器不支持Web Bluetooth');
+    updateStatus('搜索蓝牙打印机...');
+    try {
+        const device = await navigator.bluetooth.requestDevice({
+            filters: [{ services: [PRINT_SERVICE_UUID] }],
+            optionalServices: [PRINT_SERVICE_UUID]
+        });
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService(PRINT_SERVICE_UUID);
+        printerCharacteristic = await service.getCharacteristic(PRINT_CHARACTERISTIC_UUID);
+        updateStatus('✅ 打印机已连接');
+        return printerCharacteristic;
+    } catch {
+        updateStatus('尝试通用连接...');
+        const device = await navigator.bluetooth.requestDevice({
+            acceptAllDevices: true,
+            optionalServices: [PRINT_SERVICE_UUID]
+        });
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService(PRINT_SERVICE_UUID);
+        printerCharacteristic = await service.getCharacteristic(PRINT_CHARACTERISTIC_UUID);
+        updateStatus('✅ 打印机已连接 (通用)');
+        return printerCharacteristic;
+    }
+}
+
+async function printCurrentCart() {
+    if (!Object.keys(cart).length) { alert('购物车为空'); return; }
+    try {
+        if (!printerCharacteristic) await connectPrinter();
+        let items = [], total = 0;
+        for (let [id, qty] of Object.entries(cart)) {
+            const p = products.find(p => p.id == id);
+            if (p) { const t = p.price * qty; total += t; items.push({ name: p.name, quantity: qty, price: p.price, total: t }); }
+        }
+        const data = generateReceiptData({ items, total, time: new Date().toLocaleString() });
+        await printerCharacteristic.writeValue(data);
+        updateStatus('✅ 小票打印成功'); alert('打印指令已发送');
+    } catch (e) { alert('打印失败: ' + e.message); updateStatus('打印失败', true); printerCharacteristic = null; }
+}
+
+async function printOrderReceipt(order) {
+    try {
+        if (!printerCharacteristic) await connectPrinter();
+        const data = generateReceiptData(order);
+        await printerCharacteristic.writeValue(data);
+        updateStatus('✅ 订单打印成功');
+        return true;
+    } catch (e) { updateStatus('打印失败', true); throw e; }
 }
 
     async function connectPrinter() {
