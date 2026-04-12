@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>猫屎宝欢迎你</title>
-    <!-- 引入 encoding.js 用于 GBK/GB18030 编码转换 -->
+    <!-- encoding.js 用于 GBK 编码转换 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/2.0.0/encoding.min.js"></script>
-    <!-- 引入 ESC/POS 编码库（用于生成基础指令结构） -->
+    <!-- ESC/POS 编码库 -->
     <script src="https://cdn.jsdelivr.net/npm/escpos-encoder@1.0.0/dist/escpos-encoder.min.js"></script>
     <style>
+        /* ========== 完全保留原有样式，未作任何改动 ========== */
         :root {
             --primary-color: #ff9a9e;
             --secondary-color: #fad0c4;
@@ -640,7 +641,7 @@
     </div>
 </div>
 
-<!-- 模态框区域 (完整保留原有业务功能) -->
+<!-- 模态框 (完整保留原有内容) -->
 <div id="addModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" onclick="closeModal('addModal')">×</span>
@@ -719,7 +720,7 @@
 </div>
 
 <script>
-    // ==================== 全局变量与业务逻辑 (完全保留) ====================
+    // ==================== 全局变量与初始化 ====================
     const DB_KEYS = {
         PRODUCTS: 'cat_shit_bao_products',
         ORDERS: 'cat_shit_bao_orders',
@@ -796,7 +797,7 @@
         } catch(e) {}
     }
 
-    // Firebase 初始化及同步 (与原版一致)
+    // Firebase
     async function initializeFirebase() {
         try {
             showLoading();
@@ -829,68 +830,264 @@
         try { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(ref(firebaseDb, 'categories'), categoryData); } catch(e) {}
     }
 
-    // 渲染分类、商品、购物车等函数 (与原版完全相同，为节省篇幅略去，但实际文件中是完整的)
-    // ... 此处省略的函数包括：renderCategoryFilters, renderSubFilterBar, filterProducts, renderProducts,
-    //     renderCart, addToCart, updateQty, clearCart, checkout, processOrder, showOrders, viewOrderDetails,
-    //     updateCategorySelects, updateSubCatSelect, addProduct, updateManageTable, deleteProduct, editProduct,
-    //     saveEditedProduct, 分类管理相关函数, 导入导出, 清空数据, 手动同步等。
-    // 由于之前已多次提供完整代码，此处仅展示核心打印模块改动，完整文件请结合之前回答中的业务逻辑部分。
-    // 为确保可用，我将在实际输出的完整回答中包含所有上述函数（从之前版本复制）。
-
-    // ==================== 新版打印模块 (基于 encoding.js + GBK) ====================
-    // 等待 encoding.js 加载完成
-    function waitForEncoding(callback) {
-        if (typeof Encoding !== 'undefined' && Encoding.convert) {
-            callback();
-        } else {
-            setTimeout(() => waitForEncoding(callback), 100);
+    // 渲染分类筛选
+    function renderCategoryFilters() {
+        const bar = document.getElementById('mainFilterBar'); bar.innerHTML = '';
+        const allBtn = document.createElement('button'); allBtn.className=`filter-btn ${currentFilterMain==='all'?'active':''}`; allBtn.textContent='全部'; allBtn.onclick=()=>filterProducts('all'); bar.appendChild(allBtn);
+        categoryData.forEach(cat=>{ const btn=document.createElement('button'); btn.className=`filter-btn ${currentFilterMain===cat.name?'active':''}`; btn.textContent=cat.name; btn.onclick=()=>filterProducts(cat.name); bar.appendChild(btn); });
+        const addBtn=document.createElement('button'); addBtn.className='filter-btn'; addBtn.style.marginLeft='auto'; addBtn.style.backgroundColor='var(--primary-color)'; addBtn.style.color='white'; addBtn.innerHTML='+ 添加商品'; addBtn.onclick=()=>{ openModal('addModal'); }; bar.appendChild(addBtn);
+        renderSubFilterBar();
+    }
+    function renderSubFilterBar() {
+        const bar = document.getElementById('subFilterBar'); bar.innerHTML = '';
+        if(currentFilterMain==='all') return;
+        const cat = categoryData.find(c=>c.name===currentFilterMain);
+        if(cat && cat.subs && cat.subs.length) {
+            const allSub = document.createElement('button'); allSub.className=`sub-filter-btn ${currentFilterSub==='all'?'active':''}`; allSub.textContent='全部子类'; allSub.onclick=()=>filterProducts(currentFilterMain,'all'); bar.appendChild(allSub);
+            cat.subs.forEach(sub=>{ const b=document.createElement('button'); b.className=`sub-filter-btn ${currentFilterSub===sub?'active':''}`; b.textContent=sub; b.onclick=()=>filterProducts(currentFilterMain,sub); bar.appendChild(b); });
         }
     }
+    function filterProducts(cat, sub='all') { currentFilterMain=cat; currentFilterSub=sub; renderCategoryFilters(); renderProducts(cat,sub); }
 
-    // 将字符串转换为 GBK 字节数组
-    function toGbkBytes(str) {
-        if (typeof Encoding === 'undefined') {
-            console.warn('encoding.js 未加载，使用 UTF-8 回退');
-            return new TextEncoder().encode(str);
-        }
-        // 将字符串转换为 GB18030 (兼容 GBK) 的字节数组
-        const unicodeArray = Encoding.stringToCode(str);
-        return Encoding.convert(unicodeArray, {
-            to: 'GB18030',
-            from: 'UNICODE'
+    // 渲染商品
+    function renderProducts(cat='all', sub='all') {
+        const grid = document.getElementById('productGrid'); grid.innerHTML='';
+        let filtered = products;
+        if(cat!=='all') { filtered = filtered.filter(p=>p.category===cat); if(sub!=='all') filtered = filtered.filter(p=>p.subCategory===sub); }
+        if(filtered.length===0) { grid.innerHTML=`<div class="no-products"><div>暂无商品</div><button onclick="openModal('addModal')" style="background:var(--primary-color); color:white; margin-top:10px;">+ 添加商品</button></div>`; return; }
+        filtered.forEach(p=>{
+            const card = document.createElement('div'); card.className='product-card'; card.onclick=()=>addToCart(p.id);
+            let imgHtml = p.imageUrl ? `<div class="product-image-container"><img class="product-image" src="${p.imageUrl}" onerror="handleImageError(this)"></div>` : `<div class="product-image-container"><div class="no-image">暂无图片</div></div>`;
+            let subTag = p.subCategory ? `<span class="product-sub-tag">${p.subCategory}</span>` : '';
+            card.innerHTML = `<span class="product-stock">库存: ${p.stock}</span><div class="product-tag-container"><span class="product-tag">${p.category}</span>${subTag}</div>${imgHtml}<span class="product-price">¥ ${p.price.toFixed(2)}</span><div class="product-name">${p.name}</div>`;
+            grid.appendChild(card);
         });
     }
 
-    // 生成打印数据
-    function generateReceiptData(orderInfo) {
-        if (typeof EscPosEncoder === 'undefined') {
-            throw new Error('打印库未加载');
+    // 购物车
+    function renderCart() {
+        const container = document.getElementById('cartItems'); container.innerHTML=''; let total=0, empty=true;
+        for(let [id,qty] of Object.entries(cart)) {
+            if(qty>0) { empty=false; const p=products.find(p=>p.id==id); if(p) { total+=p.price*qty;
+                const item=document.createElement('div'); item.className='cart-item';
+                item.innerHTML=`<div class="cart-item-info"><div class="cart-item-name">${p.name}</div><div class="cart-item-price">¥ ${p.price.toFixed(2)} x ${qty}</div></div><div class="cart-controls"><button class="qty-btn" onclick="updateQty(${id},-1)">-</button><span>${qty}</span><button class="qty-btn" onclick="updateQty(${id},1)">+</button></div>`;
+                container.appendChild(item);
+            }}
         }
-        const encoder = new EscPosEncoder();
+        if(empty) container.innerHTML='<div style="text-align:center;color:#999;margin-top:50px;">购物车为空</div>';
+        document.getElementById('totalAmount').innerText = `¥ ${total.toFixed(2)}`;
+    }
+    function addToCart(id) { const p=products.find(p=>p.id===id); if(!p) return; if(p.stock<=0) { alert(`"${p.name}" 库存不足`); return; } cart[id] = (cart[id]||0)+1; renderCart(); }
+    function updateQty(id, ch) {
+        if(cart[id]) { cart[id]+=ch; if(cart[id]<=0) delete cart[id]; else { const p=products.find(p=>p.id==id); if(p && cart[id]>p.stock) { cart[id]=p.stock; alert(`库存只有 ${p.stock} 个`); } } renderCart(); }
+    }
+    function clearCart() { if(Object.keys(cart).length===0) { alert('购物车已经是空的'); return; } if(confirm('清空购物车？')) { cart={}; renderCart(); } }
+
+    // 订单
+    function checkout() {
+        if(Object.keys(cart).length===0) { alert('购物车是空的'); return; }
+        for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p && qty>p.stock) { alert(`"${p.name}" 库存不足`); return; } }
+        const list=document.getElementById('confirmList'); list.innerHTML=''; let total=0;
+        for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { total+=p.price*qty; const d=document.createElement('div'); d.style.display='flex'; d.style.justifyContent='space-between'; d.innerHTML=`<span>${p.name} x${qty}</span><span>¥ ${(p.price*qty).toFixed(2)}</span>`; list.appendChild(d); } }
+        document.getElementById('confirmTotal').innerText=`¥ ${total.toFixed(2)}`;
+        document.getElementById('orderSuccessMessage').style.display='none';
+        openModal('confirmModal');
+    }
+    async function processOrder() {
+        document.getElementById('orderSuccessMessage').style.display='block';
+        let total=0, items=[];
+        for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { const it=p.price*qty; total+=it; items.push({productId:p.id, name:p.name, quantity:qty, price:p.price, total:it}); } }
+        const now = new Date(), timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+        const orderNo = orderCounter.toString().padStart(3,'0');
+        const order = { id:orderCounter, orderNo, time:timeStr, items, total };
+        orders.unshift(order); orderCounter++;
+        for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { p.stock-=qty; if(p.stock<0) p.stock=0; } }
+        saveToStorage(); renderProducts(currentFilterMain, currentFilterSub);
+        if(firebaseInitialized) { try { await syncProductsToFirebase(); const { ref, push, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(push(ref(firebaseDb, 'orders')), { orderNo, time:timeStr, items, total, status:'completed' }); } catch(e) {} }
         
-        // 初始化打印机，设置汉字模式
+        closeModal('confirmModal');
+        cart = {};
+        renderCart();
+        alert(`订单 #${orderNo} 提交成功！`);
+        
+        try {
+            await printOrderReceipt(order);
+        } catch(e) {
+            console.error('自动打印失败:', e);
+            updateStatus('打印失败，可手动重试', true);
+        }
+    }
+    function showOrders() {
+        const tbody = document.querySelector('#ordersTable tbody'); tbody.innerHTML='';
+        if(orders.length===0) { tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#999;">暂无订单</td></tr>'; document.getElementById('orderCount').textContent='0'; return; }
+        orders.forEach(o=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${o.orderNo}</td><td>${o.time}</td><td>${o.items.reduce((s,i)=>s+i.quantity,0)} 件</td><td>¥ ${o.total.toFixed(2)}</td><td><button onclick="viewOrderDetails(${o.id})">查看</button></td>`; tbody.appendChild(tr); });
+        document.getElementById('orderCount').textContent=orders.length;
+    }
+    function viewOrderDetails(id) { const o=orders.find(o=>o.id===id); if(!o) return; let det=`订单号:${o.orderNo}\n时间:${o.time}\n`; o.items.forEach(i=>det+=`${i.name} x${i.quantity} ¥${i.total.toFixed(2)}\n`); det+=`合计:¥${o.total.toFixed(2)}`; alert(det); }
+
+    // 商品管理
+    function updateCategorySelects(mainId, subId, selMain='', selSub='') {
+        const main=document.getElementById(mainId); if(!main) return; main.innerHTML=''; 
+        categoryData.forEach(c=>{ const opt=document.createElement('option'); opt.value=c.name; opt.textContent=c.name; if(c.name===selMain) opt.selected=true; main.appendChild(opt); });
+        updateSubCatSelect(mainId, subId, selSub);
+    }
+    function updateSubCatSelect(mainId, subId, selSub='') {
+        const main=document.getElementById(mainId), sub=document.getElementById(subId);
+        if(!main || !sub) return;
+        const cat=categoryData.find(c=>c.name===main.value); sub.innerHTML='<option value="">无子分类</option>';
+        if(cat && cat.subs) cat.subs.forEach(s=>{ const opt=document.createElement('option'); opt.value=s; opt.textContent=s; if(s===selSub) opt.selected=true; sub.appendChild(opt); });
+    }
+    async function addProduct() {
+        const name=document.getElementById('newProdName').value.trim(), cat=document.getElementById('newProdCat').value, sub=document.getElementById('newProdSubCat').value;
+        const img=document.getElementById('newProdImageUrl').value.trim(), price=parseFloat(document.getElementById('newProdPrice').value), stock=parseInt(document.getElementById('newProdStock').value);
+        if(!name) { alert('请输入商品名称'); return; } if(isNaN(price)||price<=0) { alert('价格无效'); return; } if(isNaN(stock)||stock<0) { alert('库存无效'); return; }
+        const exist=products.find(p=>p.name.toLowerCase()===name.toLowerCase());
+        if(exist) { if(confirm(`"${name}"已存在，更新库存？`)) { exist.stock+=stock; saveToStorage(); renderProducts(); closeModal('addModal'); if(firebaseInitialized) await syncProductsToFirebase(); } return; }
+        const newId = products.length ? Math.max(...products.map(p=>p.id))+1 : 1;
+        products.push({ id:newId, name, category:cat, subCategory:sub, imageUrl:img, price, stock });
+        saveToStorage(); renderProducts(); closeModal('addModal');
+        ['newProdName','newProdImageUrl','newProdPrice'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('newProdStock').value='10'; document.getElementById('newProdImagePreview').style.display='none';
+        if(firebaseInitialized) await syncProductsToFirebase();
+    }
+    function updateManageTable() {
+        const tbody=document.querySelector('#manageTable tbody'); tbody.innerHTML='';
+        if(!products.length) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center;">暂无商品</td></tr>'; document.getElementById('productCount').textContent='0'; return; }
+        products.forEach(p=>{
+            const tr=document.createElement('tr'); let catD=p.category+(p.subCategory?` / ${p.subCategory}`:'');
+            let imgCell='<td>无图片</td>'; if(p.imageUrl) imgCell=`<td><div style="width:40px;height:40px;"><img src="${p.imageUrl}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='图片失效'"></div></td>`;
+            tr.innerHTML=`<td>${p.id}</td><td>${p.name}</td>${imgCell}<td>${catD}</td><td>¥${p.price.toFixed(2)}</td><td>${p.stock}</td><td><button onclick="deleteProduct(${p.id})">删除</button> <button onclick="editProduct(${p.id})">编辑</button></td>`;
+            tbody.appendChild(tr);
+        });
+        document.getElementById('productCount').textContent=products.length;
+    }
+    async function deleteProduct(id) {
+        const p=products.find(p=>p.id===id); if(!p) return; if(!confirm(`删除 "${p.name}"？`)) return;
+        products=products.filter(p=>p.id!==id); if(cart[id]) delete cart[id];
+        saveToStorage(); renderProducts(); renderCart(); updateManageTable();
+        if(firebaseInitialized) await syncProductsToFirebase();
+    }
+    function editProduct(id) {
+        const p=products.find(p=>p.id===id); if(!p) return;
+        document.getElementById('editProdId').value=id; document.getElementById('editProdName').value=p.name;
+        document.getElementById('editProdImageUrl').value=p.imageUrl||''; document.getElementById('editProdPrice').value=p.price;
+        document.getElementById('editProdStock').value=p.stock;
+        updateCategorySelects('editProdCat','editProdSubCat', p.category, p.subCategory||'');
+        const prev=document.getElementById('editProdImagePreview'); if(p.imageUrl) { prev.src=p.imageUrl; prev.style.display='block'; } else prev.style.display='none';
+        openModal('editModal');
+    }
+    async function saveEditedProduct() {
+        const id=parseInt(document.getElementById('editProdId').value), name=document.getElementById('editProdName').value.trim();
+        const cat=document.getElementById('editProdCat').value, sub=document.getElementById('editProdSubCat').value;
+        const img=document.getElementById('editProdImageUrl').value.trim(), price=parseFloat(document.getElementById('editProdPrice').value), stock=parseInt(document.getElementById('editProdStock').value);
+        if(!name||isNaN(price)||price<=0||isNaN(stock)||stock<0) { alert('信息不完整'); return; }
+        const p=products.find(p=>p.id===id); if(!p) return;
+        if(products.some(x=>x.id!==id && x.name.toLowerCase()===name.toLowerCase())) { alert('名称重复'); return; }
+        Object.assign(p, { name, category:cat, subCategory:sub, imageUrl:img, price, stock });
+        saveToStorage(); renderProducts(); renderCart(); updateManageTable();
+        if(firebaseInitialized) await syncProductsToFirebase();
+        closeModal('editModal');
+    }
+
+    // 分类管理
+    function renderManageCatList() {
+        const list=document.getElementById('manageCatList'); list.innerHTML='';
+        categoryData.forEach((c,i)=>{ const d=document.createElement('div'); d.className=`cat-manage-item ${selectedManageCatIndex===i?'selected':''}`; d.innerText=c.name; d.onclick=()=>{ selectedManageCatIndex=i; renderManageCatList(); renderManageSubCatList(i); }; list.appendChild(d); });
+    }
+    function renderManageSubCatList(idx) {
+        const cat=categoryData[idx]; document.getElementById('subCatManageArea').style.display='block';
+        document.getElementById('selectedCatName').innerText=cat.name; const list=document.getElementById('manageSubCatList'); list.innerHTML='';
+        if(!cat.subs||!cat.subs.length) list.innerHTML='<span>无子分类</span>';
+        else cat.subs.forEach((s,i)=>{ const chip=document.createElement('div'); chip.className='sub-cat-chip'; chip.innerHTML=`${s} <span onclick="deleteSubCategory(${idx},${i})" style="cursor:pointer;color:red;">×</span>`; list.appendChild(chip); });
+    }
+    async function addMainCategory() {
+        const name=document.getElementById('newCatNameInput').value.trim(); if(!name) return;
+        if(categoryData.some(c=>c.name===name)) { alert('已存在'); return; }
+        categoryData.push({ name, subs:[] }); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase();
+        renderManageCatList(); renderCategoryFilters(); document.getElementById('newCatNameInput').value='';
+    }
+    async function deleteSelectedMainCategory() {
+        if(selectedManageCatIndex===-1) return; const cat=categoryData[selectedManageCatIndex];
+        if(products.some(p=>p.category===cat.name)) { alert('有商品使用此分类，无法删除'); return; }
+        if(confirm(`删除 "${cat.name}"？`)) { categoryData.splice(selectedManageCatIndex,1); selectedManageCatIndex=-1; document.getElementById('subCatManageArea').style.display='none'; saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageCatList(); renderCategoryFilters(); }
+    }
+    async function addSubCategory() {
+        if(selectedManageCatIndex===-1) return; const name=document.getElementById('newSubCatNameInput').value.trim(); if(!name) return;
+        const cat=categoryData[selectedManageCatIndex]; if(!cat.subs) cat.subs=[];
+        if(cat.subs.includes(name)) { alert('已存在'); return; }
+        cat.subs.push(name); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase();
+        renderManageSubCatList(selectedManageCatIndex); renderCategoryFilters(); document.getElementById('newSubCatNameInput').value='';
+    }
+    async function deleteSubCategory(catIdx, subIdx) {
+        event.stopPropagation(); const cat=categoryData[catIdx], sub=cat.subs[subIdx];
+        if(products.some(p=>p.category===cat.name && p.subCategory===sub)) { alert('有商品使用此子分类'); return; }
+        if(confirm(`删除 "${sub}"？`)) { cat.subs.splice(subIdx,1); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageSubCatList(catIdx); renderCategoryFilters(); }
+    }
+
+    // 数据导入导出
+    function exportData() {
+        const data = { products, orders, orderCounter, categories: categoryData, exportTime: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `猫屎宝数据_${new Date().toISOString().slice(0,10)}.json`; a.click();
+    }
+    function importData() {
+        const inp = document.createElement('input'); inp.type='file'; inp.accept='.json';
+        inp.onchange = async (e) => {
+            const file = e.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if(!data.products || !Array.isArray(data.products)) { alert('格式错误'); return; }
+                    if(confirm(`导入 ${data.products.length} 个商品？`)) {
+                        products = data.products; orders = data.orders || []; orderCounter = data.orderCounter || 1;
+                        categoryData = data.categories || DEFAULT_CATEGORIES;
+                        products.forEach(p=>{ if(!p.imageUrl) p.imageUrl=''; });
+                        saveToStorage(); renderCategoryFilters(); renderProducts();
+                        if(firebaseInitialized) { await syncProductsToFirebase(); await syncCategoriesToFirebase(); }
+                    }
+                } catch(ex) { alert('导入失败'); }
+            };
+            reader.readAsText(file);
+        };
+        inp.click();
+    }
+    async function clearAllData() {
+        if(!confirm('清空所有数据？不可恢复！')) return;
+        if(!confirm('再次确认清空？')) return;
+        products=[]; orders=[]; cart={}; orderCounter=1; categoryData=JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+        saveToStorage(); renderCategoryFilters(); renderProducts(); renderCart();
+        if(firebaseInitialized) { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(ref(firebaseDb, 'products'), {}); await set(ref(firebaseDb, 'categories'), categoryData); }
+    }
+    async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
+
+    // ==================== GBK 打印模块 (基于 encoding.js) ====================
+    function toGbkBytes(str) {
+        if (typeof Encoding === 'undefined') {
+            console.warn('encoding.js 未加载，回退 UTF-8');
+            return new TextEncoder().encode(str);
+        }
+        const unicodeArray = Encoding.stringToCode(str);
+        return Encoding.convert(unicodeArray, { to: 'GB18030', from: 'UNICODE' });
+    }
+
+    function generateReceiptData(orderInfo) {
+        const encoder = new EscPosEncoder();
         let result = encoder
             .initialize()
-            .raw([0x1C, 0x26])           // FS & 进入汉字模式
+            .raw([0x1C, 0x26])           // FS & 汉字模式
             .align('center');
         
-        // 店名 (GBK 编码)
-        result.raw(toGbkBytes('《玦泥泥小猫饭屋》'));
-        result.newline();
-        result.raw(toGbkBytes('--------------------------------'));
-        result.newline();
-        
+        result.raw(toGbkBytes('《玦泥泥小猫饭屋》')); result.newline();
+        result.raw(toGbkBytes('--------------------------------')); result.newline();
         result.align('left');
+        
         if (orderInfo.orderNo) {
-            result.raw(toGbkBytes(`订单号: ${orderInfo.orderNo}`));
-            result.newline();
-            result.raw(toGbkBytes(`时间: ${orderInfo.time || new Date().toLocaleString()}`));
-            result.newline();
-            result.raw(toGbkBytes('--------------------------------'));
-            result.newline();
+            result.raw(toGbkBytes(`订单号: ${orderInfo.orderNo}`)); result.newline();
+            result.raw(toGbkBytes(`时间: ${orderInfo.time || new Date().toLocaleString()}`)); result.newline();
+            result.raw(toGbkBytes('--------------------------------')); result.newline();
         }
         
-        // 商品明细
         orderInfo.items.forEach(item => {
             const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
             const qty = `x${item.quantity}`;
@@ -898,34 +1095,25 @@
             const leftPart = `${name} ${qty}`;
             const spaces = Math.max(1, 32 - leftPart.length - price.length);
             const line = leftPart + ' '.repeat(spaces) + price;
-            result.raw(toGbkBytes(line));
-            result.newline();
+            result.raw(toGbkBytes(line)); result.newline();
         });
         
-        result.raw(toGbkBytes('--------------------------------'));
-        result.newline();
+        result.raw(toGbkBytes('--------------------------------')); result.newline();
         result.align('right');
-        result.raw(toGbkBytes(`总计: ¥${orderInfo.total.toFixed(2)}`));
-        result.newline();
+        result.raw(toGbkBytes(`总计: ¥${orderInfo.total.toFixed(2)}`)); result.newline();
         result.align('center');
-        result.raw(toGbkBytes('感谢惠顾！'));
-        result.newline();
-        result.raw(toGbkBytes(' '));
-        result.newline();
+        result.raw(toGbkBytes('感谢惠顾！')); result.newline();
+        result.raw(toGbkBytes(' ')); result.newline();
         result.cut();
         
         return result.encode();
     }
 
-    // 连接蓝牙打印机
     async function connectPrinter() {
         if (!navigator.bluetooth) throw new Error('浏览器不支持Web Bluetooth');
         updateStatus('搜索蓝牙打印机...');
         try {
-            const device = await navigator.bluetooth.requestDevice({
-                filters: [{ services: [PRINT_SERVICE_UUID] }],
-                optionalServices: [PRINT_SERVICE_UUID]
-            });
+            const device = await navigator.bluetooth.requestDevice({ filters: [{ services: [PRINT_SERVICE_UUID] }], optionalServices: [PRINT_SERVICE_UUID] });
             const server = await device.gatt.connect();
             const service = await server.getPrimaryService(PRINT_SERVICE_UUID);
             printerCharacteristic = await service.getCharacteristic(PRINT_CHARACTERISTIC_UUID);
@@ -933,10 +1121,7 @@
             return printerCharacteristic;
         } catch {
             updateStatus('尝试通用连接...');
-            const device = await navigator.bluetooth.requestDevice({
-                acceptAllDevices: true,
-                optionalServices: [PRINT_SERVICE_UUID]
-            });
+            const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: [PRINT_SERVICE_UUID] });
             const server = await device.gatt.connect();
             const service = await server.getPrimaryService(PRINT_SERVICE_UUID);
             printerCharacteristic = await service.getCharacteristic(PRINT_CHARACTERISTIC_UUID);
@@ -945,7 +1130,6 @@
         }
     }
 
-    // 打印当前购物车
     async function printCurrentCart() {
         if (!Object.keys(cart).length) { alert('购物车为空'); return; }
         try {
@@ -953,23 +1137,14 @@
             let items = [], total = 0;
             for (let [id, qty] of Object.entries(cart)) {
                 const p = products.find(p => p.id == id);
-                if (p) {
-                    const t = p.price * qty;
-                    total += t;
-                    items.push({ name: p.name, quantity: qty, price: p.price, total: t });
-                }
+                if (p) { const t = p.price * qty; total += t; items.push({ name: p.name, quantity: qty, price: p.price, total: t }); }
             }
             const data = generateReceiptData({ items, total, time: new Date().toLocaleString() });
             await printerCharacteristic.writeValue(data);
             updateStatus('✅ 小票打印成功'); alert('打印指令已发送');
-        } catch (e) {
-            alert('打印失败: ' + e.message);
-            updateStatus('打印失败', true);
-            printerCharacteristic = null;
-        }
+        } catch (e) { alert('打印失败: ' + e.message); updateStatus('打印失败', true); printerCharacteristic = null; }
     }
 
-    // 打印正式订单
     async function printOrderReceipt(order) {
         try {
             if (!printerCharacteristic) await connectPrinter();
@@ -977,36 +1152,21 @@
             await printerCharacteristic.writeValue(data);
             updateStatus('✅ 订单打印成功');
             return true;
-        } catch (e) {
-            updateStatus('打印失败', true);
-            throw e;
-        }
+        } catch (e) { updateStatus('打印失败', true); throw e; }
     }
 
-    // 初始化应用
+    // 初始化
     async function initApp() {
         showLoading();
         if (!loadFromStorage()) {
-            products = [
-                { id: 1, name: '刀宗吧唧', category: '吧唧', subCategory: '', imageUrl: 'https://via.placeholder.com/200x200/FF9A9E/FFFFFF?text=刀宗吧唧', price: 8, stock: 20 },
-                { id: 2, name: '手机支架', category: '亚克力', subCategory: '', imageUrl: 'https://via.placeholder.com/200x200/FAD0C4/FFFFFF?text=支架', price: 35, stock: 4 }
-            ];
+            products = [ { id:1, name:'刀宗吧唧', category:'吧唧', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FF9A9E/FFFFFF?text=刀宗吧唧', price:8, stock:20 }, { id:2, name:'手机支架', category:'亚克力', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FAD0C4/FFFFFF?text=支架', price:35, stock:4 } ];
             saveToStorage();
         }
         categoryData.forEach(c => { if (!c.subs) c.subs = []; });
-        setTimeout(async () => {
-            await initializeFirebase();
-            if (products.length && firebaseInitialized) {
-                await syncProductsToFirebase();
-                await syncCategoriesToFirebase();
-            }
-        }, 1000);
-        renderCategoryFilters();
-        renderProducts();
-        renderCart();
+        setTimeout(async () => { await initializeFirebase(); if (products.length && firebaseInitialized) { await syncProductsToFirebase(); await syncCategoriesToFirebase(); } }, 1000);
+        renderCategoryFilters(); renderProducts(); renderCart();
         updateStatus(`已加载 ${products.length} 个商品`);
     }
-
     document.addEventListener('DOMContentLoaded', () => setTimeout(initApp, 300));
 </script>
 </body>
