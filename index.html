@@ -603,7 +603,7 @@ const customGbkMap = new Map([
     ['坑', 0xB0BC], ['很', 0xBAD8], ['想', 0xCFEB], ['你', 0xC4E3], ['》', 0xA1B7],
     ['订', 0xB6A9], ['单', 0xB5A5], ['号', 0xBAC5], ['时', 0xCAB1], ['间', 0xBCE4],
     ['感', 0xB8D0], ['谢', 0xD0BB], ['惠', 0xBBDD], ['顾', 0xB9CB], ['！', 0xA3A1],
-    ['总', 0xD7DC], ['计', 0xBCC6], ['：', 0xA3BA],
+    ['总', 0xD7DC], ['计', 0xBCC6], ['：', 0xA3BA],['屋', 0xCEDD]
 
     // === 门派名称 ===
     ['万', 0xCDF2], ['花', 0xBBA8], ['天', 0xCCEC], ['策', 0xB2DF], ['纯', 0xB4BF],
@@ -667,7 +667,7 @@ function generateReceiptData(orderInfo) {
 
     // 居中 - 店名（已更新）
     buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
-    buffers.push(strToGbkBytes('《我在猫屎坑很想你》'));
+    buffers.push(strToGbkBytes('《我在猫屋想你》'));
     buffers.push(new Uint8Array([0x0A]));
     buffers.push(strToGbkBytes('--------------------------------'));
     buffers.push(new Uint8Array([0x0A]));
@@ -685,15 +685,14 @@ function generateReceiptData(orderInfo) {
 
     // 商品明细
     orderInfo.items.forEach(item => {
-        const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
-        const qty = `x${item.quantity}`;
-        const price = `¥${item.total.toFixed(2)}`;
-        const leftPart = `${name} ${qty}`;
-        const spaces = Math.max(1, 32 - leftPart.length - price.length);
-        const line = leftPart + ' '.repeat(spaces) + price;
-        buffers.push(strToGbkBytes(line));
-        buffers.push(new Uint8Array([0x0A]));
-    });
+    const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
+    const qty = `x${item.quantity}`;
+    const price = `¥${item.total.toFixed(2)}`;
+    // 直接拼接：商品名 + 空格 + 数量 + 空格 + 价格
+    const line = `${name} ${qty} ${price}`;
+    buffers.push(strToGbkBytes(line));
+    buffers.push(new Uint8Array([0x0A]));
+});
 
     buffers.push(strToGbkBytes('--------------------------------'));
     buffers.push(new Uint8Array([0x0A]));
