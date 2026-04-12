@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>猫屎宝欢迎你</title>
-    <!-- encoding.js 用于 GBK 编码转换 -->
+    <!-- encoding.js 用于 GBK 编码 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/2.0.0/encoding.min.js"></script>
     <!-- ESC/POS 编码库 -->
     <script src="https://cdn.jsdelivr.net/npm/escpos-encoder@1.0.0/dist/escpos-encoder.min.js"></script>
     <style>
-        /* ========== 完全保留原有样式，未作任何改动 ========== */
         :root {
             --primary-color: #ff9a9e;
             --secondary-color: #fad0c4;
@@ -641,7 +640,7 @@
     </div>
 </div>
 
-<!-- 模态框 (完整保留原有内容) -->
+<!-- 模态框区域 -->
 <div id="addModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" onclick="closeModal('addModal')">×</span>
@@ -720,7 +719,7 @@
 </div>
 
 <script>
-    // ==================== 全局变量与初始化 ====================
+    // ==================== 全局变量 ====================
     const DB_KEYS = {
         PRODUCTS: 'cat_shit_bao_products',
         ORDERS: 'cat_shit_bao_orders',
@@ -753,7 +752,7 @@
     let printerCharacteristic = null;
     let selectedManageCatIndex = -1;
 
-    // 辅助函数
+    // ==================== 辅助函数 ====================
     function updateStatus(msg, isError=false) {
         const el = document.getElementById('status-text');
         if (el) el.innerHTML = isError ? `<span style="color:#ff6b6b;">⚠️ ${msg}</span>` : `<span style="color:green;">✅ ${msg}</span>`;
@@ -778,7 +777,7 @@
     function closeModal(id) { document.getElementById(id).style.display='none'; }
     window.onclick = (e) => { if(e.target.classList.contains('modal')) e.target.style.display='none'; };
 
-    // 数据存储
+    // ==================== 本地存储 ====================
     function loadFromStorage() {
         try {
             const sp = localStorage.getItem(DB_KEYS.PRODUCTS); if(sp) { products=JSON.parse(sp); products.forEach(p=>{if(!p.imageUrl)p.imageUrl='';}); }
@@ -797,7 +796,7 @@
         } catch(e) {}
     }
 
-    // Firebase
+    // ==================== Firebase ====================
     async function initializeFirebase() {
         try {
             showLoading();
@@ -829,8 +828,9 @@
         if(!firebaseInitialized) return;
         try { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(ref(firebaseDb, 'categories'), categoryData); } catch(e) {}
     }
+    async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
 
-    // 渲染分类筛选
+    // ==================== 分类筛选渲染 ====================
     function renderCategoryFilters() {
         const bar = document.getElementById('mainFilterBar'); bar.innerHTML = '';
         const allBtn = document.createElement('button'); allBtn.className=`filter-btn ${currentFilterMain==='all'?'active':''}`; allBtn.textContent='全部'; allBtn.onclick=()=>filterProducts('all'); bar.appendChild(allBtn);
@@ -849,7 +849,7 @@
     }
     function filterProducts(cat, sub='all') { currentFilterMain=cat; currentFilterSub=sub; renderCategoryFilters(); renderProducts(cat,sub); }
 
-    // 渲染商品
+    // ==================== 商品渲染 ====================
     function renderProducts(cat='all', sub='all') {
         const grid = document.getElementById('productGrid'); grid.innerHTML='';
         let filtered = products;
@@ -864,7 +864,7 @@
         });
     }
 
-    // 购物车
+    // ==================== 购物车 ====================
     function renderCart() {
         const container = document.getElementById('cartItems'); container.innerHTML=''; let total=0, empty=true;
         for(let [id,qty] of Object.entries(cart)) {
@@ -883,7 +883,7 @@
     }
     function clearCart() { if(Object.keys(cart).length===0) { alert('购物车已经是空的'); return; } if(confirm('清空购物车？')) { cart={}; renderCart(); } }
 
-    // 订单
+    // ==================== 订单处理 ====================
     function checkout() {
         if(Object.keys(cart).length===0) { alert('购物车是空的'); return; }
         for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p && qty>p.stock) { alert(`"${p.name}" 库存不足`); return; } }
@@ -909,13 +909,7 @@
         cart = {};
         renderCart();
         alert(`订单 #${orderNo} 提交成功！`);
-        
-        try {
-            await printOrderReceipt(order);
-        } catch(e) {
-            console.error('自动打印失败:', e);
-            updateStatus('打印失败，可手动重试', true);
-        }
+        try { await printOrderReceipt(order); } catch(e) { updateStatus('打印失败，可手动重试', true); }
     }
     function showOrders() {
         const tbody = document.querySelector('#ordersTable tbody'); tbody.innerHTML='';
@@ -925,7 +919,7 @@
     }
     function viewOrderDetails(id) { const o=orders.find(o=>o.id===id); if(!o) return; let det=`订单号:${o.orderNo}\n时间:${o.time}\n`; o.items.forEach(i=>det+=`${i.name} x${i.quantity} ¥${i.total.toFixed(2)}\n`); det+=`合计:¥${o.total.toFixed(2)}`; alert(det); }
 
-    // 商品管理
+    // ==================== 商品管理 ====================
     function updateCategorySelects(mainId, subId, selMain='', selSub='') {
         const main=document.getElementById(mainId); if(!main) return; main.innerHTML=''; 
         categoryData.forEach(c=>{ const opt=document.createElement('option'); opt.value=c.name; opt.textContent=c.name; if(c.name===selMain) opt.selected=true; main.appendChild(opt); });
@@ -989,7 +983,7 @@
         closeModal('editModal');
     }
 
-    // 分类管理
+    // ==================== 分类管理 ====================
     function renderManageCatList() {
         const list=document.getElementById('manageCatList'); list.innerHTML='';
         categoryData.forEach((c,i)=>{ const d=document.createElement('div'); d.className=`cat-manage-item ${selectedManageCatIndex===i?'selected':''}`; d.innerText=c.name; d.onclick=()=>{ selectedManageCatIndex=i; renderManageCatList(); renderManageSubCatList(i); }; list.appendChild(d); });
@@ -1024,7 +1018,7 @@
         if(confirm(`删除 "${sub}"？`)) { cat.subs.splice(subIdx,1); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageSubCatList(catIdx); renderCategoryFilters(); }
     }
 
-    // 数据导入导出
+    // ==================== 数据导入导出 ====================
     function exportData() {
         const data = { products, orders, orderCounter, categories: categoryData, exportTime: new Date().toISOString() };
         const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
@@ -1059,14 +1053,10 @@
         saveToStorage(); renderCategoryFilters(); renderProducts(); renderCart();
         if(firebaseInitialized) { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(ref(firebaseDb, 'products'), {}); await set(ref(firebaseDb, 'categories'), categoryData); }
     }
-    async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
 
-    // ==================== GBK 打印模块 (基于 encoding.js) ====================
+    // ==================== GBK 打印模块 ====================
     function toGbkBytes(str) {
-        if (typeof Encoding === 'undefined') {
-            console.warn('encoding.js 未加载，回退 UTF-8');
-            return new TextEncoder().encode(str);
-        }
+        if (typeof Encoding === 'undefined') return new TextEncoder().encode(str);
         const unicodeArray = Encoding.stringToCode(str);
         return Encoding.convert(unicodeArray, { to: 'GB18030', from: 'UNICODE' });
     }
@@ -1075,19 +1065,16 @@
         const encoder = new EscPosEncoder();
         let result = encoder
             .initialize()
-            .raw([0x1C, 0x26])           // FS & 汉字模式
+            .raw([0x1C, 0x26])
             .align('center');
-        
         result.raw(toGbkBytes('《玦泥泥小猫饭屋》')); result.newline();
         result.raw(toGbkBytes('--------------------------------')); result.newline();
         result.align('left');
-        
         if (orderInfo.orderNo) {
             result.raw(toGbkBytes(`订单号: ${orderInfo.orderNo}`)); result.newline();
             result.raw(toGbkBytes(`时间: ${orderInfo.time || new Date().toLocaleString()}`)); result.newline();
             result.raw(toGbkBytes('--------------------------------')); result.newline();
         }
-        
         orderInfo.items.forEach(item => {
             const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
             const qty = `x${item.quantity}`;
@@ -1097,7 +1084,6 @@
             const line = leftPart + ' '.repeat(spaces) + price;
             result.raw(toGbkBytes(line)); result.newline();
         });
-        
         result.raw(toGbkBytes('--------------------------------')); result.newline();
         result.align('right');
         result.raw(toGbkBytes(`总计: ¥${orderInfo.total.toFixed(2)}`)); result.newline();
@@ -1105,7 +1091,6 @@
         result.raw(toGbkBytes('感谢惠顾！')); result.newline();
         result.raw(toGbkBytes(' ')); result.newline();
         result.cut();
-        
         return result.encode();
     }
 
@@ -1155,15 +1140,21 @@
         } catch (e) { updateStatus('打印失败', true); throw e; }
     }
 
-    // 初始化
+    // ==================== 初始化 ====================
     async function initApp() {
         showLoading();
         if (!loadFromStorage()) {
-            products = [ { id:1, name:'刀宗吧唧', category:'吧唧', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FF9A9E/FFFFFF?text=刀宗吧唧', price:8, stock:20 }, { id:2, name:'手机支架', category:'亚克力', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FAD0C4/FFFFFF?text=支架', price:35, stock:4 } ];
+            products = [
+                { id:1, name:'刀宗吧唧', category:'吧唧', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FF9A9E/FFFFFF?text=刀宗吧唧', price:8, stock:20 },
+                { id:2, name:'手机支架', category:'亚克力', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FAD0C4/FFFFFF?text=支架', price:35, stock:4 }
+            ];
             saveToStorage();
         }
         categoryData.forEach(c => { if (!c.subs) c.subs = []; });
-        setTimeout(async () => { await initializeFirebase(); if (products.length && firebaseInitialized) { await syncProductsToFirebase(); await syncCategoriesToFirebase(); } }, 1000);
+        setTimeout(async () => {
+            await initializeFirebase();
+            if (products.length && firebaseInitialized) { await syncProductsToFirebase(); await syncCategoriesToFirebase(); }
+        }, 1000);
         renderCategoryFilters(); renderProducts(); renderCart();
         updateStatus(`已加载 ${products.length} 个商品`);
     }
