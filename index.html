@@ -4,43 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>猫屎宝欢迎你</title>
-    <!-- 增强版 ESC/POS 库加载：支持主备 CDN 和动态加载检测 -->
+    <!-- 内嵌 ESC/POS 编码库 (精简稳定版，无需网络) -->
     <script>
-        (function() {
-            window.escposEncoderReady = false;
-            window.ensureEscPosEncoder = function(callback) {
-                if (typeof EscPosEncoder !== 'undefined') {
-                    window.escposEncoderReady = true;
-                    if (callback) callback();
-                    return;
-                }
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/escpos-encoder@1.0.0/dist/escpos-encoder.min.js';
-                script.onload = function() {
-                    window.escposEncoderReady = true;
-                    console.log('✅ ESC/POS 库加载成功 (jsdelivr)');
-                    if (callback) callback();
-                };
-                script.onerror = function() {
-                    console.warn('主 CDN 失败，尝试备用...');
-                    const backup = document.createElement('script');
-                    backup.src = 'https://unpkg.com/escpos-encoder@1.0.0/dist/escpos-encoder.min.js';
-                    backup.onload = function() {
-                        window.escposEncoderReady = true;
-                        console.log('✅ ESC/POS 库加载成功 (unpkg)');
-                        if (callback) callback();
-                    };
-                    backup.onerror = function() {
-                        console.error('❌ 所有 CDN 均失败，打印功能将不可用');
-                        alert('打印组件加载失败，请检查网络后刷新重试。');
-                    };
-                    document.head.appendChild(backup);
-                };
-                document.head.appendChild(script);
+        (function(global, factory) {
+            typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+            typeof define === 'function' && define.amd ? define(factory) :
+            (global.EscPosEncoder = factory());
+        }(this, function() { 'use strict';
+            const codepageMapping = {
+                'utf8': 0, 'cp437': 1, 'cp850': 2, 'cp852': 3, 'cp857': 4, 'cp858': 5,
+                'cp860': 6, 'cp863': 7, 'cp866': 8, 'cp1252': 9, 'iso88591': 10
             };
-            // 预加载
-            ensureEscPosEncoder();
-        })();
+            class EscPosEncoder {
+                constructor() {
+                    this._buffer = [];
+                    this._codepage = 'utf8';
+                    this._align = 'left';
+                }
+                _queue(data) { this._buffer = this._buffer.concat(Array.isArray(data) ? data : [data]); return this; }
+                _textEncoder() { return new TextEncoder(); }
+                initialize() { this._queue([0x1b, 0x40]); return this; }
+                codepage(cp) { const code = codepageMapping[cp] || 0; this._queue([0x1b, 0x74, code]); this._codepage = cp; return this; }
+                align(value) { const alignMap = { left: 0, center: 1, right: 2 }; if (alignMap[value] !== undefined) { this._queue([0x1b, 0x61, alignMap[value]]); this._align = value; } return this; }
+                bold(enabled = true) { this._queue([0x1b, 0x45, enabled ? 1 : 0]); return this; }
+                underline(enabled = true) { this._queue([0x1b, 0x2d, enabled ? 1 : 0]); return this; }
+                size(width = 1, height = 1) { if (width >= 1 && width <= 8 && height >= 1 && height <= 8) { const n = ((width - 1) << 4) | (height - 1); this._queue([0x1d, 0x21, n]); } return this; }
+                line(text = '') { if (text.length) { const bytes = this._textEncoder().encode(text); this._queue(Array.from(bytes)); } this._queue([0x0a]); return this; }
+                cut(mode = 'full') { const cutMap = { full: 0x00, partial: 0x01 }; this._queue([0x1d, 0x56, cutMap[mode] || 0x00]); return this; }
+                encode() { return new Uint8Array(this._buffer); }
+            }
+            return EscPosEncoder;
+        }));
+        console.log('✅ 内嵌打印库已就绪');
     </script>
     <style>
         :root {
@@ -574,7 +569,6 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        /* 移动端响应式 */
         @media screen and (max-width: 768px) {
             .main-container { flex-direction: column; overflow-y: auto; }
             .product-section { flex: none; width: 100%; border-right: none; padding: 12px; }
@@ -614,7 +608,7 @@
 <body>
 
 <header>
-    <h1>🐱 殃泥泥猫屎宝</h1>
+    <h1>🐱 玦泥泥猫屎宝</h1>
     <div class="header-buttons">
         <button onclick="showOrders()">🐱 查看订单</button>
         <button onclick="openModal('manageModal')">🐱 咪咪管理</button>
@@ -689,7 +683,7 @@
     </div>
 </div>
 
-<!-- 咪咪管理 Modal -->
+<!-- 管理 Modal -->
 <div id="manageModal" class="modal">
     <div class="modal-content" style="max-width: 800px;">
         <span class="close-modal" onclick="closeModal('manageModal')">×</span>
@@ -744,19 +738,44 @@
 </div>
 
 <script>
-    // ---------- 全局变量与初始化 ----------
-    const DB_KEYS = { PRODUCTS: 'cat_shit_bao_products', ORDERS: 'cat_shit_bao_orders', ORDER_COUNTER: 'cat_shit_bao_order_counter', CATEGORIES: 'cat_shit_bao_categories' };
-    const FIREBASE_CONFIG = { databaseURL: "https://jnnxm-f9492-default-rtdb.asia-southeast1.firebasedatabase.app/" };
-    let products = [], orders = [], cart = {}, orderCounter = 1;
-    let categoryData = [], currentFilterMain = 'all', currentFilterSub = 'all';
-    let firebaseApp = null, firebaseDb = null, firebaseInitialized = false;
-    const DEFAULT_CATEGORIES = [ { name: '吧唧', subs: [] }, { name: '亚克力', subs: [] }, { name: '滴胶', subs: [] }, { name: '色纸', subs: [] }, { name: '本子', subs: [] }, { name: '其他', subs: [] } ];
+    // ==================== 全局变量与初始化 ====================
+    const DB_KEYS = {
+        PRODUCTS: 'cat_shit_bao_products',
+        ORDERS: 'cat_shit_bao_orders',
+        ORDER_COUNTER: 'cat_shit_bao_order_counter',
+        CATEGORIES: 'cat_shit_bao_categories'
+    };
+
+    const FIREBASE_CONFIG = {
+        databaseURL: "https://jnnxm-f9492-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+
+    let products = [];
+    let orders = [];
+    let cart = {};
+    let orderCounter = 1;
+    let categoryData = []; 
+    let currentFilterMain = 'all';
+    let currentFilterSub = 'all';
+    let firebaseApp = null;
+    let firebaseDb = null;
+    let firebaseInitialized = false;
+    
+    const DEFAULT_CATEGORIES = [
+        { name: '吧唧', subs: [] },
+        { name: '亚克力', subs: [] },
+        { name: '滴胶', subs: [] },
+        { name: '色纸', subs: [] },
+        { name: '本子', subs: [] },
+        { name: '其他', subs: [] }
+    ];
+
     const PRINT_SERVICE_UUID = '000018f0-0000-1000-8000-00805f9b34fb';
     const PRINT_CHARACTERISTIC_UUID = '00002af1-0000-1000-8000-00805f9b34fb';
     let printerCharacteristic = null;
     let selectedManageCatIndex = -1;
 
-    // ---------- 辅助函数 ----------
+    // 辅助函数
     function updateStatus(msg, isError=false) {
         const el = document.getElementById('status-text');
         if (el) el.innerHTML = isError ? `<span style="color:#ff6b6b;">⚠️ ${msg}</span>` : `<span style="color:green;">✅ ${msg}</span>`;
@@ -779,7 +798,7 @@
     function closeModal(id) { document.getElementById(id).style.display='none'; }
     window.onclick = (e) => { if(e.target.classList.contains('modal')) e.target.style.display='none'; };
 
-    // ---------- 数据存储 ----------
+    // 数据存储
     function loadFromStorage() {
         try {
             const sp = localStorage.getItem(DB_KEYS.PRODUCTS); if(sp) { products=JSON.parse(sp); products.forEach(p=>{if(!p.imageUrl)p.imageUrl='';}); }
@@ -798,7 +817,7 @@
         } catch(e) {}
     }
 
-    // ---------- Firebase ----------
+    // Firebase
     async function initializeFirebase() {
         try {
             showLoading();
@@ -831,7 +850,7 @@
         try { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(ref(firebaseDb, 'categories'), categoryData); } catch(e) {}
     }
 
-    // ---------- 渲染 ----------
+    // 渲染分类筛选
     function renderCategoryFilters() {
         const bar = document.getElementById('mainFilterBar'); bar.innerHTML = '';
         const allBtn = document.createElement('button'); allBtn.className=`filter-btn ${currentFilterMain==='all'?'active':''}`; allBtn.textContent='全部'; allBtn.onclick=()=>filterProducts('all'); bar.appendChild(allBtn);
@@ -849,6 +868,8 @@
         }
     }
     function filterProducts(cat, sub='all') { currentFilterMain=cat; currentFilterSub=sub; renderCategoryFilters(); renderProducts(cat,sub); }
+
+    // 渲染商品
     function renderProducts(cat='all', sub='all') {
         const grid = document.getElementById('productGrid'); grid.innerHTML='';
         let filtered = products;
@@ -862,6 +883,8 @@
             grid.appendChild(card);
         });
     }
+
+    // 购物车
     function renderCart() {
         const container = document.getElementById('cartItems'); container.innerHTML=''; let total=0, empty=true;
         for(let [id,qty] of Object.entries(cart)) {
@@ -880,7 +903,7 @@
     }
     function clearCart() { if(Object.keys(cart).length===0) { alert('购物车已经是空的'); return; } if(confirm('清空购物车？')) { cart={}; renderCart(); } }
 
-    // ---------- 订单 ----------
+    // 订单
     function checkout() {
         if(Object.keys(cart).length===0) { alert('购物车是空的'); return; }
         for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p && qty>p.stock) { alert(`"${p.name}" 库存不足`); return; } }
@@ -914,7 +937,7 @@
     }
     function viewOrderDetails(id) { const o=orders.find(o=>o.id===id); if(!o) return; let det=`订单号:${o.orderNo}\n时间:${o.time}\n`; o.items.forEach(i=>det+=`${i.name} x${i.quantity} ¥${i.total.toFixed(2)}\n`); det+=`合计:¥${o.total.toFixed(2)}`; alert(det); }
 
-    // ---------- 商品管理 ----------
+    // 商品管理
     function updateCategorySelects(mainId, subId, selMain='', selSub='') {
         const main=document.getElementById(mainId); main.innerHTML=''; categoryData.forEach(c=>{ const opt=document.createElement('option'); opt.value=c.name; opt.textContent=c.name; if(c.name===selMain) opt.selected=true; main.appendChild(opt); });
         updateSubCatSelect(mainId, subId, selSub);
@@ -976,7 +999,7 @@
         closeModal('editModal');
     }
 
-    // ---------- 分类管理 ----------
+    // 分类管理
     function renderManageCatList() {
         const list=document.getElementById('manageCatList'); list.innerHTML='';
         categoryData.forEach((c,i)=>{ const d=document.createElement('div'); d.className=`cat-manage-item ${selectedManageCatIndex===i?'selected':''}`; d.innerText=c.name; d.onclick=()=>{ selectedManageCatIndex=i; renderManageCatList(); renderManageSubCatList(i); }; list.appendChild(d); });
@@ -1011,7 +1034,7 @@
         if(confirm(`删除 "${sub}"？`)) { cat.subs.splice(subIdx,1); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageSubCatList(catIdx); renderCategoryFilters(); }
     }
 
-    // ---------- 数据导入导出 ----------
+    // 数据导入导出
     function exportData() {
         const data = { products, orders, orderCounter, categories: categoryData, exportTime: new Date().toISOString() };
         const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
@@ -1048,12 +1071,7 @@
     }
     async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
 
-    // ---------- 蓝牙打印 (增强版) ----------
-    async function ensureLibrary() {
-        if(typeof EscPosEncoder !== 'undefined') return true;
-        updateStatus('加载打印库...');
-        return new Promise(resolve => { window.ensureEscPosEncoder(() => { if(typeof EscPosEncoder !== 'undefined') { updateStatus('打印库就绪'); resolve(true); } else { updateStatus('打印库加载失败', true); resolve(false); } }); });
-    }
+    // 蓝牙打印 (使用内嵌库)
     async function connectPrinter() {
         if(!navigator.bluetooth) throw new Error('浏览器不支持Web Bluetooth');
         updateStatus('搜索蓝牙打印机...');
@@ -1076,7 +1094,7 @@
     }
     function generateReceiptData(orderInfo) {
         const encoder = new EscPosEncoder();
-        let result = encoder.initialize().codepage('utf8').align('center').line('殃泥泥猫屎宝').line('================').align('left');
+        let result = encoder.initialize().codepage('utf8').align('center').line('玦泥泥猫屎宝').line('================').align('left');
         if(orderInfo.orderNo) { result.line(`订单号: ${orderInfo.orderNo}`); result.line(`时间: ${orderInfo.time || new Date().toLocaleString()}`); result.line('----------------'); }
         result.line('商品           数量  小计');
         orderInfo.items.forEach(item => {
@@ -1088,7 +1106,6 @@
     }
     async function printCurrentCart() {
         if(!Object.keys(cart).length) { alert('购物车为空'); return; }
-        if(!await ensureLibrary()) { alert('打印库加载失败，请刷新'); return; }
         try {
             if(!printerCharacteristic) await connectPrinter();
             let items=[], total=0;
@@ -1099,7 +1116,6 @@
         } catch(e) { alert('打印失败: '+e.message); updateStatus('打印失败', true); printerCharacteristic=null; }
     }
     async function printOrderReceipt(order) {
-        if(!await ensureLibrary()) return false;
         try {
             if(!printerCharacteristic) await connectPrinter();
             const data = generateReceiptData(order);
@@ -1108,7 +1124,7 @@
         } catch(e) { updateStatus('打印失败', true); return false; }
     }
 
-    // ---------- 启动 ----------
+    // 初始化
     async function initApp() {
         showLoading();
         if(!loadFromStorage()) {
