@@ -1122,16 +1122,19 @@
         buffers.push(strToGbkBytes(`总计: ¥${orderInfo.total.toFixed(2)}`));
         buffers.push(new Uint8Array([0x0A]));
         buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
-        buffers.push(strToGbkBytes('感谢惠顾！'));
-        buffers.push(new Uint8Array([0x0A]));
-        buffers.push(strToGbkBytes(' '));
-        buffers.push(new Uint8Array([0x0A]));
-        buffers.push(new Uint8Array([0x1D, 0x56, 0x00]));
-        const totalLength = buffers.reduce((sum, buf) => sum + buf.length, 0);
-        const result = new Uint8Array(totalLength);
-        let offset = 0;
-        for (const buf of buffers) { result.set(buf, offset); offset += buf.length; }
-        return result;
+       buffers.push(strToGbkBytes('感谢惠顾！'));
+buffers.push(new Uint8Array([0x0A]));
+buffers.push(strToGbkBytes(' '));
+buffers.push(new Uint8Array([0x0A]));
+
+// 新增两行空白行，方便裁剪
+buffers.push(strToGbkBytes(' '));
+buffers.push(new Uint8Array([0x0A]));
+buffers.push(strToGbkBytes(' '));
+buffers.push(new Uint8Array([0x0A]));
+
+// 切纸
+buffers.push(new Uint8Array([0x1D, 0x56, 0x00]));
     }
 
     async function connectPrinter() {
