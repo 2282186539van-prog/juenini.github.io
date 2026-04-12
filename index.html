@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>猫屎宝欢迎你</title>
     <style>
-        /* ========== 完整样式 ========== */
         :root {
             --primary-color: #ff9a9e;
             --secondary-color: #fad0c4;
@@ -1051,7 +1050,7 @@
     }
     async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
 
-    // ==================== 精简 GBK 映射表（包含所有已知需打印字符） ====================
+    // ==================== 精简 GBK 映射表 ====================
     const customGbkMap = new Map([
         ['《', 0xA1B6], ['我', 0xCED2], ['在', 0xD4DA], ['猫', 0xC3A8], ['屎', 0xCABA],
         ['坑', 0xB0BC], ['很', 0xBAD8], ['想', 0xCFEB], ['你', 0xC4E3], ['》', 0xA1B7],
@@ -1122,19 +1121,21 @@
         buffers.push(strToGbkBytes(`总计: ¥${orderInfo.total.toFixed(2)}`));
         buffers.push(new Uint8Array([0x0A]));
         buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
-       buffers.push(strToGbkBytes('感谢惠顾！'));
-buffers.push(new Uint8Array([0x0A]));
-buffers.push(strToGbkBytes(' '));
-buffers.push(new Uint8Array([0x0A]));
-
-// 新增两行空白行，方便裁剪
-buffers.push(strToGbkBytes(' '));
-buffers.push(new Uint8Array([0x0A]));
-buffers.push(strToGbkBytes(' '));
-buffers.push(new Uint8Array([0x0A]));
-
-// 切纸
-buffers.push(new Uint8Array([0x1D, 0x56, 0x00]));
+        buffers.push(strToGbkBytes('感谢惠顾！'));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(strToGbkBytes(' '));
+        buffers.push(new Uint8Array([0x0A]));
+        // 新增两行空白行，方便裁剪
+        buffers.push(strToGbkBytes(' '));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(strToGbkBytes(' '));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(new Uint8Array([0x1D, 0x56, 0x00]));
+        const totalLength = buffers.reduce((sum, buf) => sum + buf.length, 0);
+        const result = new Uint8Array(totalLength);
+        let offset = 0;
+        for (const buf of buffers) { result.set(buf, offset); offset += buf.length; }
+        return result;
     }
 
     async function connectPrinter() {
