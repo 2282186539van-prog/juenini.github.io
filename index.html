@@ -720,7 +720,8 @@
         PRODUCTS: 'cat_shit_bao_products',
         ORDERS: 'cat_shit_bao_orders',
         ORDER_COUNTER: 'cat_shit_bao_order_counter',
-        CATEGORIES: 'cat_shit_bao_categories'
+        CATEGORIES: 'cat_shit_bao_categories',
+        DAILY_ORDER_KEY: 'cat_shit_bao_daily_order_key'
     };
 
     const FIREBASE_CONFIG = {
@@ -747,6 +748,31 @@
     const PRINT_CHARACTERISTIC_UUID = '00002af1-0000-1000-8000-00805f9b34fb';
     let printerCharacteristic = null;
     let selectedManageCatIndex = -1;
+
+    // 获取今日日期字符串 YYYY-MM-DD
+    function getTodayStr() {
+        const d = new Date();
+        return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
+    }
+
+    // 获取每日订单序号（自动重置）
+    function getDailyOrderNumber() {
+        const today = getTodayStr();
+        const storedKey = localStorage.getItem(DB_KEYS.DAILY_ORDER_KEY);
+        if (storedKey) {
+            const { date, counter } = JSON.parse(storedKey);
+            if (date === today) {
+                return counter + 1;
+            }
+        }
+        return 1;
+    }
+
+    // 保存每日订单序号
+    function saveDailyOrderNumber(counter) {
+        const today = getTodayStr();
+        localStorage.setItem(DB_KEYS.DAILY_ORDER_KEY, JSON.stringify({ date: today, counter: counter }));
+    }
 
     // 辅助函数
     function updateStatus(msg, isError=false) {
@@ -892,8 +918,14 @@
         document.getElementById('orderSuccessMessage').style.display='block';
         let total=0, items=[];
         for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { const it=p.price*qty; total+=it; items.push({productId:p.id, name:p.name, quantity:qty, price:p.price, total:it}); } }
-        const now = new Date(), timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-        const orderNo = orderCounter.toString().padStart(3,'0');
+        const now = new Date();
+        const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+        
+        // 获取每日订单号（从#001开始）
+        const dailySeq = getDailyOrderNumber();
+        const orderNo = `#${dailySeq.toString().padStart(3, '0')}`;
+        saveDailyOrderNumber(dailySeq);
+        
         const order = { id:orderCounter, orderNo, time:timeStr, items, total };
         orders.unshift(order); orderCounter++;
         for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { p.stock-=qty; if(p.stock<0) p.stock=0; } }
@@ -903,7 +935,7 @@
         closeModal('confirmModal');
         cart = {};
         renderCart();
-        alert(`订单 #${orderNo} 提交成功！`);
+        alert(`订单 ${orderNo} 提交成功！`);
         try { await printOrderReceipt(order); } catch(e) { updateStatus('打印失败，可手动重试', true); }
     }
     function showOrders() {
@@ -1050,13 +1082,13 @@
     }
     async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
 
-    // ==================== 精简 GBK 映射表 ====================
+    // ==================== GBK 打印模块 ====================
     const customGbkMap = new Map([
-        ['《', 0xA1B6], ['我', 0xCED2], ['在', 0xD4DA], ['猫', 0xC3A8], ['屎', 0xCABA],
-        ['坑', 0xB0BC], ['很', 0xBAD8], ['想', 0xCFEB], ['你', 0xC4E3], ['》', 0xA1B7],
+        ['《', 0xA1B6], ['我', 0xCED2], ['在', 0xD4DA], ['猫', 0xC3A8], ['饭', 0xB7B9], ['屋', 0xCEDD],
+        ['很', 0xBAD8], ['想', 0xCFEB], ['你', 0xC4E3], ['》', 0xA1B7],
         ['订', 0xB6A9], ['单', 0xB5A5], ['号', 0xBAC5], ['时', 0xCAB1], ['间', 0xBCE4],
         ['感', 0xB8D0], ['谢', 0xD0BB], ['惠', 0xBBDD], ['顾', 0xB9CB], ['！', 0xA3A1],
-        ['总', 0xD7DC], ['计', 0xBCC6], ['：', 0xA3BA],['饭', B7B9],['屋',CEC4]
+        ['总', 0xD7DC], ['计', 0xBCC6], ['：', 0xA3BA], ['#', 0x23],
         ['万', 0xCDF2], ['花', 0xBBA8], ['天', 0xCCEC], ['策', 0xB2DF], ['纯', 0xB4BF],
         ['阳', 0xD1F4], ['七', 0xC6DF], ['秀', 0xD0E3], ['藏', 0xB2D8], ['剑', 0xBDA3],
         ['五', 0xCEE5], ['毒', 0xB6BE], ['唐', 0xCCC6], ['门', 0xC3C5], ['明', 0xC3F7],
@@ -1071,7 +1103,8 @@
         ['日', 0xC8D5], ['记', 0xBCC7], ['归', 0xB9E9], ['鞘', 0xC7CA], ['打', 0xB4F2],
         ['卡', 0xBFA8], ['棒', 0xB0F4], ['动', 0xB6AF], ['物', 0xCEEF], ['贴', 0xCCF9],
         ['纸', 0xD6BD], ['包', 0xB0FC], ['甜', 0xCCF0], ['蜜', 0xC3DB], ['夏', 0xCFC4],
-        ['窗', 0xB4B0], ['便', 0xB1E3], ['签', 0xC7A9],
+        ['窗', 0xB4B0], ['便', 0xB1E3], ['签', 0xC7A9], ['玦', 0xE4B3], ['泥', 0xC4E0],
+        ['屎', 0xCABA], ['坑', 0xB0BC], ['小', 0xD0A1], ['猫', 0xC3A8], ['饭', 0xB7B9], ['屋', 0xCEDD],
     ]);
 
     function strToGbkBytes(str) {
@@ -1096,19 +1129,23 @@
         buffers.push(new Uint8Array([0x1B, 0x40]));
         buffers.push(new Uint8Array([0x1C, 0x26]));
         buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
+        // 新标题
         buffers.push(strToGbkBytes('《我在猫饭屋很想你》'));
+        buffers.push(new Uint8Array([0x0A]));
+        // 打印时间戳
+        const printTime = new Date();
+        const timeStr = `${printTime.getFullYear()}-${(printTime.getMonth()+1).toString().padStart(2,'0')}-${printTime.getDate().toString().padStart(2,'0')} ${printTime.getHours().toString().padStart(2,'0')}:${printTime.getMinutes().toString().padStart(2,'0')}:${printTime.getSeconds().toString().padStart(2,'0')}`;
+        buffers.push(strToGbkBytes(`打印时间: ${timeStr}`));
         buffers.push(new Uint8Array([0x0A]));
         buffers.push(strToGbkBytes('--------------------------------'));
         buffers.push(new Uint8Array([0x0A]));
         buffers.push(new Uint8Array([0x1B, 0x61, 0x00]));
-        if (orderInfo.orderNo) {
-            buffers.push(strToGbkBytes(`订单号: ${orderInfo.orderNo}`));
-            buffers.push(new Uint8Array([0x0A]));
-            buffers.push(strToGbkBytes(`时间: ${orderInfo.time || new Date().toLocaleString()}`));
-            buffers.push(new Uint8Array([0x0A]));
-            buffers.push(strToGbkBytes('--------------------------------'));
-            buffers.push(new Uint8Array([0x0A]));
-        }
+        // 订单号
+        buffers.push(strToGbkBytes(`订单号: ${orderInfo.orderNo}`));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(strToGbkBytes('--------------------------------'));
+        buffers.push(new Uint8Array([0x0A]));
+        // 商品明细
         orderInfo.items.forEach(item => {
             const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
             const line = `${name} x${item.quantity} ¥${item.total.toFixed(2)}`;
@@ -1125,7 +1162,6 @@
         buffers.push(new Uint8Array([0x0A]));
         buffers.push(strToGbkBytes(' '));
         buffers.push(new Uint8Array([0x0A]));
-        // 新增两行空白行，方便裁剪
         buffers.push(strToGbkBytes(' '));
         buffers.push(new Uint8Array([0x0A]));
         buffers.push(strToGbkBytes(' '));
@@ -1168,7 +1204,9 @@
                 const p = products.find(p => p.id == id);
                 if (p) { const t = p.price * qty; total += t; items.push({ name: p.name, quantity: qty, price: p.price, total: t }); }
             }
-            const data = generateReceiptData({ items, total, time: new Date().toLocaleString() });
+            // 预览打印使用临时订单号
+            const tempOrderNo = `预览 #${getDailyOrderNumber().toString().padStart(3, '0')}`;
+            const data = generateReceiptData({ orderNo: tempOrderNo, items, total });
             await printerCharacteristic.writeValue(data);
             updateStatus('✅ 小票打印成功'); alert('打印指令已发送');
         } catch (e) { alert('打印失败: ' + e.message); updateStatus('打印失败', true); printerCharacteristic = null; }
