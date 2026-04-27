@@ -172,7 +172,6 @@
             transform: translateY(-3px);
         }
 
-        /* 长按激活效果 */
         .product-card.long-press-active {
             border: 2px solid var(--accent-color);
             transform: scale(0.97);
@@ -216,12 +215,45 @@
             padding-top: 10px;
             border-top: 1px dashed #eee;
             font-size: 0.95rem;
-            text-align: center;
             line-height: 1.2;
             min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 4px;
+        }
+
+        .product-name-text {
+            flex: 1;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .add-to-cart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-left: 4px;
+            transition: transform 0.15s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.9);
         }
 
         .product-tag-container {
@@ -543,7 +575,7 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        /* 上下文菜单样式 */
+        /* 上下文菜单 */
         .context-menu {
             display: none;
             position: fixed;
@@ -597,12 +629,11 @@
             z-index: 1999;
             background: transparent;
         }
-
         .context-menu-backdrop.visible {
             display: block;
         }
 
-        /* 搜索栏样式 */
+        /* 搜索栏 */
         .search-container {
             position: relative;
             margin-bottom: 12px;
@@ -681,7 +712,6 @@
             display: none;
             cursor: pointer;
         }
-
         .search-exact-match.visible {
             display: block;
         }
@@ -698,6 +728,7 @@
             .product-name { font-size: 0.85rem; min-height: 32px; padding-top: 6px; }
             .product-price { font-size: 1rem; margin-top: 2px; }
             .product-stock { top: 5px; right: 5px; font-size: 0.7rem; padding: 2px 4px; }
+            .add-to-cart-btn { width: 30px; height: 30px; font-size: 1.3rem; }
             header { padding: 10px 12px; flex-wrap: wrap; }
             h1 { font-size: 1.2rem; }
             .header-buttons { gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
@@ -774,7 +805,6 @@
     <div class="modal-content">
         <span class="close-modal" onclick="closeModal('addModal')">×</span>
         <h2>+ 添加商品</h2>
-        <!-- 搜索栏 -->
         <div class="form-group">
             <label>🔍 搜索已有商品</label>
             <div class="search-container">
@@ -898,9 +928,8 @@
     let longPressTriggered = false;
     let touchStartX = 0, touchStartY = 0;
     let touchMoved = false;
-    const MOVE_THRESHOLD = 10; // 移动超过10px视为滑动
+    const MOVE_THRESHOLD = 10;
 
-    // 上下文菜单目标
     let contextMenuTargetId = null;
 
     // 辅助函数
@@ -1044,15 +1073,11 @@
     }
 
     document.getElementById('ctxEditProduct').addEventListener('click', () => {
-        if (contextMenuTargetId !== null) {
-            editProduct(contextMenuTargetId);
-        }
+        if (contextMenuTargetId !== null) editProduct(contextMenuTargetId);
         hideContextMenu();
     });
     document.getElementById('ctxDeleteProduct').addEventListener('click', () => {
-        if (contextMenuTargetId !== null) {
-            deleteProduct(contextMenuTargetId);
-        }
+        if (contextMenuTargetId !== null) deleteProduct(contextMenuTargetId);
         hideContextMenu();
     });
     document.getElementById('contextMenuBackdrop').addEventListener('click', hideContextMenu);
@@ -1060,7 +1085,6 @@
         e.preventDefault();
         hideContextMenu();
     });
-    // 全局点击隐藏菜单
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.context-menu') && !e.target.closest('.product-card')) {
             hideContextMenu();
@@ -1076,7 +1100,7 @@
         longPressTriggered = false;
     }
 
-    // 渲染商品（包含触摸优化和长按）
+    // 渲染商品（已取消卡片短按加入购物车，改为右侧按钮）
     function renderProducts(cat='all', sub='all') {
         const grid = document.getElementById('productGrid'); grid.innerHTML='';
         let filtered = products;
@@ -1087,7 +1111,7 @@
             card.className = 'product-card';
             card.setAttribute('data-product-id', p.id);
 
-            // 触摸事件处理
+            // 触摸事件：仅用于长按弹出菜单
             card.addEventListener('touchstart', (e) => {
                 if (e.touches.length > 1) return;
                 const touch = e.touches[0];
@@ -1119,12 +1143,8 @@
                 if (longPressTriggered) {
                     e.preventDefault();
                     e.stopPropagation();
-                } else if (!touchMoved) {
-                    // 短按未移动 → 加入购物车
-                    e.preventDefault();
-                    addToCart(p.id);
                 }
-                // 如果移动了，什么也不做
+                // 短按不再执行任何操作（原来在这里加入购物车的逻辑已移除）
             });
 
             card.addEventListener('touchcancel', () => {
@@ -1140,7 +1160,28 @@
 
             let imgHtml = p.imageUrl ? `<div class="product-image-container"><img class="product-image" src="${p.imageUrl}" onerror="handleImageError(this)"></div>` : `<div class="product-image-container"><div class="no-image">暂无图片</div></div>`;
             let subTag = p.subCategory ? `<span class="product-sub-tag">${p.subCategory}</span>` : '';
-            card.innerHTML = `<span class="product-stock">库存: ${p.stock}</span><div class="product-tag-container"><span class="product-tag">${p.category}</span>${subTag}</div>${imgHtml}<span class="product-price">¥ ${p.price.toFixed(2)}</span><div class="product-name">${p.name}</div>`;
+            card.innerHTML = `
+                <span class="product-stock">库存: ${p.stock}</span>
+                <div class="product-tag-container"><span class="product-tag">${p.category}</span>${subTag}</div>
+                ${imgHtml}
+                <span class="product-price">¥ ${p.price.toFixed(2)}</span>
+                <div class="product-name">
+                    <span class="product-name-text">${p.name}</span>
+                    <button class="add-to-cart-btn">+</button>
+                </div>
+            `;
+
+            const addBtn = card.querySelector('.add-to-cart-btn');
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToCart(p.id);
+            });
+            addBtn.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                addToCart(p.id);
+            });
+
             grid.appendChild(card);
         });
     }
@@ -1306,7 +1347,7 @@
         if(confirm(`删除 "${sub}"？`)) { cat.subs.splice(subIdx,1); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageSubCatList(catIdx); renderCategoryFilters(); }
     }
 
-    // 搜索功能（添加商品界面）
+    // 搜索功能
     function setupSearchListener() {
         const input = document.getElementById('addSearchInput');
         if (!input) return;
@@ -1388,7 +1429,7 @@
     }
     async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
 
-    // ==================== GBK 打印模块（包含新增汉字） ====================
+    // ==================== GBK 打印模块 ====================
     const customGbkMap = new Map([
         ['《', 0xA1B6], ['我', 0xCED2], ['在', 0xD4DA], ['猫', 0xC3A8], ['饭', 0xB7B9], ['屋', 0xCEDD],
         ['很', 0xBAD4], ['想', 0xCFEB], ['你', 0xC4E3], ['》', 0xA1B7],
