@@ -23,10 +23,6 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
         header {
@@ -35,7 +31,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             color: white;
         }
 
@@ -69,12 +65,12 @@
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             color: var(--accent-color);
         }
 
         .status-bar {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255,255,255,0.8);
             padding: 5px 20px;
             font-size: 0.8rem;
             color: #888;
@@ -161,7 +157,7 @@
             background-color: var(--card-bg);
             border-radius: 10px;
             padding: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             cursor: pointer;
             transition: border 0.2s, transform 0.2s;
             position: relative;
@@ -169,9 +165,6 @@
             flex-direction: column;
             height: 220px;
             overflow: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
         }
 
         .product-card:hover {
@@ -179,6 +172,7 @@
             transform: translateY(-3px);
         }
 
+        /* 长按激活效果 */
         .product-card.long-press-active {
             border: 2px solid var(--accent-color);
             transform: scale(0.97);
@@ -202,7 +196,6 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            pointer-events: none;
         }
 
         .no-image {
@@ -223,41 +216,12 @@
             padding-top: 10px;
             border-top: 1px dashed #eee;
             font-size: 0.95rem;
+            text-align: center;
             line-height: 1.2;
             min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
-        }
-
-        .product-name-text {
-            flex: 1;
-            text-align: center;
-            pointer-events: none;
-        }
-
-        .add-to-cart-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            margin-left: 6px;
-            transition: transform 0.15s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .add-to-cart-btn:active {
-            transform: scale(0.9);
         }
 
         .product-tag-container {
@@ -265,7 +229,6 @@
             gap: 5px;
             flex-wrap: wrap;
             margin-bottom: 5px;
-            pointer-events: none;
         }
 
         .product-tag {
@@ -291,7 +254,6 @@
             display: block;
             margin-top: 5px;
             text-align: center;
-            pointer-events: none;
         }
 
         .product-stock {
@@ -303,7 +265,6 @@
             background: rgba(255, 255, 255, 0.9);
             padding: 2px 6px;
             border-radius: 10px;
-            pointer-events: none;
         }
 
         .no-products {
@@ -318,14 +279,278 @@
             margin-top: 15px;
         }
 
-        /* 上下文菜单 */
+        .cart-section {
+            flex: 1;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+            min-width: 300px;
+        }
+
+        .cart-header {
+            padding: 15px;
+            background-color: #fafafa;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            animation: fadeIn 0.3s;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-price {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .cart-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+            background-color: #f0f0f0;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            background-color: #fafafa;
+            border-top: 1px solid #eee;
+        }
+
+        .total-price {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .total-amount {
+            color: var(--accent-color);
+        }
+
+        .cart-actions {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px;
+        }
+
+        .btn-clear {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+        .btn-checkout {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-checkout:hover {
+            background-color: #ff5252;
+            color: white;
+        }
+
+        .btn-print {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            animation: slideIn 0.3s;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            z-index: 5;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .category-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cat-manage-list {
+            max-height: 180px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .cat-manage-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px solid #f9f9f9;
+            cursor: pointer;
+        }
+
+        .cat-manage-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .cat-manage-item.selected {
+            background-color: #e3f2fd;
+            border-left: 4px solid #1976d2;
+        }
+
+        .sub-cat-chip {
+            display: inline-block;
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+
+        .success-message {
+            color: #4CAF50;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f9f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 100px;
+            margin-top: 5px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* 上下文菜单样式 */
         .context-menu {
             display: none;
             position: fixed;
             z-index: 2000;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
             min-width: 160px;
             overflow: hidden;
             animation: contextFadeIn 0.2s ease;
@@ -352,29 +577,32 @@
             color: var(--text-color);
         }
 
-        .context-menu-item:last-child { border-bottom: none; }
-        .context-menu-item:hover { background-color: #f9f0f0; }
-        .context-menu-item.danger { color: #d32f2f; }
+        .context-menu-item:last-child {
+            border-bottom: none;
+        }
 
-        .context-menu-item .menu-icon {
-            font-size: 1.1rem;
-            width: 22px;
-            text-align: center;
+        .context-menu-item:hover {
+            background-color: #f9f0f0;
+        }
+
+        .context-menu-item.danger {
+            color: #d32f2f;
         }
 
         .context-menu-backdrop {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1999;
             background: transparent;
         }
-        .context-menu-backdrop.visible { display: block; }
 
-        /* 搜索相关样式 */
+        .context-menu-backdrop.visible {
+            display: block;
+        }
+
+        /* 搜索栏样式 */
         .search-container {
             position: relative;
             margin-bottom: 12px;
@@ -415,10 +643,12 @@
             background: white;
             margin-top: 4px;
             display: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        .search-results.visible { display: block; }
+        .search-results.visible {
+            display: block;
+        }
 
         .search-result-item {
             padding: 10px 14px;
@@ -431,22 +661,13 @@
             font-size: 0.9rem;
         }
 
-        .search-result-item:last-child { border-bottom: none; }
-        .search-result-item:hover { background-color: #fff5f5; }
-
-        .search-result-item .result-name { font-weight: bold; flex: 1; }
-        .search-result-item .result-info { font-size: 0.75rem; color: #999; margin-left: 10px; }
-        .search-result-item .result-badge {
-            font-size: 0.7rem;
-            background: #ffebee;
-            color: #d32f2f;
-            padding: 3px 8px;
-            border-radius: 10px;
-            margin-left: 8px;
-            white-space: nowrap;
+        .search-result-item:last-child {
+            border-bottom: none;
         }
 
-        .search-no-result { padding: 12px 14px; text-align: center; color: #999; font-size: 0.85rem; }
+        .search-result-item:hover {
+            background-color: #fff5f5;
+        }
 
         .search-exact-match {
             padding: 10px 14px;
@@ -459,97 +680,10 @@
             margin-top: 4px;
             display: none;
             cursor: pointer;
-            transition: background 0.15s;
-        }
-        .search-exact-match.visible { display: block; }
-        .search-exact-match:hover { background: #fff176; }
-
-        .cart-section {
-            flex: 1;
-            background-color: #fff;
-            display: flex;
-            flex-direction: column;
-            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
-            min-width: 300px;
         }
 
-        .cart-header { padding: 15px; background-color: #fafafa; border-bottom: 1px solid #eee; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .cart-items { flex: 1; overflow-y: auto; padding: 10px; }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #f0f0f0;
-            animation: fadeIn 0.3s;
-        }
-
-        .cart-item-info { flex: 1; }
-        .cart-item-name { font-weight: bold; font-size: 0.9rem; }
-        .cart-item-price { color: #888; font-size: 0.8rem; }
-        .cart-controls { display: flex; align-items: center; gap: 8px; }
-
-        .qty-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1rem;
-            background-color: #f0f0f0;
-        }
-
-        .cart-footer { padding: 20px; background-color: #fafafa; border-top: 1px solid #eee; }
-        .total-price { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
-        .total-amount { color: var(--accent-color); }
-        .cart-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
-        .btn-clear { background-color: #ffebee; color: #d32f2f; }
-        .btn-checkout { background-color: var(--accent-color); color: white; }
-        .btn-checkout:hover { background-color: #ff5252; color: white; }
-        .btn-print { background-color: #e3f2fd; color: #1976d2; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; justify-content: center; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center; align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 400px;
-            position: relative;
-            animation: slideIn 0.3s;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .close-modal { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #999; z-index: 5; }
-
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .category-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-
-        .success-message { color: #4CAF50; font-weight: bold; margin: 10px 0; padding: 10px; background-color: #f0f9f0; border-radius: 5px; text-align: center; }
-        .image-preview { max-width: 100%; max-height: 100px; margin-top: 5px; border-radius: 5px; display: none; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; } to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; }
+        .search-exact-match.visible {
+            display: block;
         }
 
         /* 移动端响应式 */
@@ -564,7 +698,6 @@
             .product-name { font-size: 0.85rem; min-height: 32px; padding-top: 6px; }
             .product-price { font-size: 1rem; margin-top: 2px; }
             .product-stock { top: 5px; right: 5px; font-size: 0.7rem; padding: 2px 4px; }
-            .add-to-cart-btn { width: 32px; height: 32px; font-size: 1.3rem; }
             header { padding: 10px 12px; flex-wrap: wrap; }
             h1 { font-size: 1.2rem; }
             .header-buttons { gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
@@ -574,14 +707,11 @@
             .sub-filter-btn { padding: 4px 10px; font-size: 0.7rem; }
             .cart-footer { padding: 12px; }
             .cart-actions { grid-template-columns: 1fr 1fr; gap: 8px; }
-            .cart-actions button { padding: 10px 0; font-size: 0.9rem; }
-            .btn-print { margin-top: 8px; padding: 10px 0; }
-            .modal-content { width: 95%; max-width: 95%; padding: 20px 15px; margin: 10px; max-height: 90vh; }
             .qty-btn { width: 32px; height: 32px; }
             .cart-item { padding: 8px 5px; }
+            .modal-content { width: 95%; max-width: 95%; padding: 20px 15px; margin: 10px; }
             .context-menu { min-width: 140px; }
             .context-menu-item { padding: 12px 16px; font-size: 0.9rem; }
-            .search-results { max-height: 120px; }
         }
     </style>
 </head>
@@ -606,8 +736,8 @@
 
 <div class="context-menu-backdrop" id="contextMenuBackdrop"></div>
 <div class="context-menu" id="contextMenu">
-    <div class="context-menu-item" id="ctxEditProduct"><span class="menu-icon">✏️</span> 编辑商品</div>
-    <div class="context-menu-item danger" id="ctxDeleteProduct"><span class="menu-icon">🗑️</span> 删除商品</div>
+    <div class="context-menu-item" id="ctxEditProduct">✏️ 编辑商品</div>
+    <div class="context-menu-item danger" id="ctxDeleteProduct">🗑️ 删除商品</div>
 </div>
 
 <div class="main-container">
@@ -639,18 +769,20 @@
     </div>
 </div>
 
+<!-- 模态框区域 -->
 <div id="addModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" onclick="closeModal('addModal')">×</span>
         <h2>+ 添加商品</h2>
+        <!-- 搜索栏 -->
         <div class="form-group">
-            <label>🔍 搜索已有商品（输入名称自动匹配）</label>
+            <label>🔍 搜索已有商品</label>
             <div class="search-container">
-                <input type="text" id="addSearchInput" placeholder="输入商品名称搜索，避免重复添加..." autocomplete="off">
+                <input type="text" id="addSearchInput" placeholder="输入名称搜索，避免重复..." autocomplete="off">
                 <span class="search-icon">🔍</span>
             </div>
             <div class="search-results" id="addSearchResults"></div>
-            <div class="search-exact-match" id="addExactMatch">⚠️ 该商品已存在，点击此处直接编辑</div>
+            <div class="search-exact-match" id="addExactMatch">该商品已存在，点击直接编辑</div>
         </div>
         <hr style="border: none; border-top: 1px dashed #e0e0e0; margin: 10px 0;">
         <div class="form-group"><label>商品名称</label><input type="text" id="newProdName" placeholder="请输入商品名称"></div>
@@ -727,663 +859,695 @@
 </div>
 
 <script>
-    (function() {
-        // ==================== 全局变量 ====================
-        const DB_KEYS = {
-            PRODUCTS: 'cat_shit_bao_products',
-            ORDERS: 'cat_shit_bao_orders',
-            ORDER_COUNTER: 'cat_shit_bao_order_counter',
-            CATEGORIES: 'cat_shit_bao_categories',
-            DAILY_ORDER_KEY: 'cat_shit_bao_daily_order_key'
-        };
+    // ==================== 全局变量与业务逻辑 ====================
+    const DB_KEYS = {
+        PRODUCTS: 'cat_shit_bao_products',
+        ORDERS: 'cat_shit_bao_orders',
+        ORDER_COUNTER: 'cat_shit_bao_order_counter',
+        CATEGORIES: 'cat_shit_bao_categories',
+        DAILY_ORDER_KEY: 'cat_shit_bao_daily_order_key'
+    };
 
-        const FIREBASE_CONFIG = {
-            databaseURL: "https://jnnxm-f9492-default-rtdb.asia-southeast1.firebasedatabase.app/"
-        };
+    const FIREBASE_CONFIG = {
+        databaseURL: "https://jnnxm-f9492-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
 
-        let products = [];
-        let orders = [];
-        let cart = {};
-        let orderCounter = 1;
-        let categoryData = [];
-        let currentFilterMain = 'all';
-        let currentFilterSub = 'all';
-        let firebaseInitialized = false;
+    let products = [];
+    let orders = [];
+    let cart = {};
+    let orderCounter = 1;
+    let categoryData = []; 
+    let currentFilterMain = 'all';
+    let currentFilterSub = 'all';
+    let firebaseApp = null;
+    let firebaseDb = null;
+    let firebaseInitialized = false;
+    
+    const DEFAULT_CATEGORIES = [
+        { name: '吧唧', subs: [] }, { name: '亚克力', subs: [] }, { name: '滴胶', subs: [] },
+        { name: '色纸', subs: [] }, { name: '本子', subs: [] }, { name: '其他', subs: [] }
+    ];
 
-        let contextMenuTargetProductId = null;
-        let longPressTimer = null;
-        let longPressTriggered = false;
-        let longPressStartX = 0;
-        let longPressStartY = 0;
-        const LONG_PRESS_DURATION = 600;
-        const LONG_PRESS_MOVE_THRESHOLD = 15;
+    const PRINT_SERVICE_UUID = '000018f0-0000-1000-8000-00805f9b34fb';
+    const PRINT_CHARACTERISTIC_UUID = '00002af1-0000-1000-8000-00805f9b34fb';
+    let printerCharacteristic = null;
+    let selectedManageCatIndex = -1;
 
-        const DEFAULT_CATEGORIES = [
-            { name: '吧唧', subs: [] }, { name: '亚克力', subs: [] }, { name: '滴胶', subs: [] },
-            { name: '色纸', subs: [] }, { name: '本子', subs: [] }, { name: '其他', subs: [] }
-        ];
+    // 长按相关变量
+    let longPressTimer = null;
+    let longPressTriggered = false;
+    let touchStartX = 0, touchStartY = 0;
+    let touchMoved = false;
+    const MOVE_THRESHOLD = 10; // 移动超过10px视为滑动
 
-        const PRINT_SERVICE_UUID = '000018f0-0000-1000-8000-00805f9b34fb';
-        const PRINT_CHARACTERISTIC_UUID = '00002af1-0000-1000-8000-00805f9b34fb';
-        let printerCharacteristic = null;
-        let selectedManageCatIndex = -1;
+    // 上下文菜单目标
+    let contextMenuTargetId = null;
 
-        // ==================== 辅助函数 ====================
-        function getTodayStr() {
-            const d = new Date();
-            return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
+    // 辅助函数
+    function getTodayStr() {
+        const d = new Date();
+        return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
+    }
+    function getDailyOrderNumber() {
+        const today = getTodayStr();
+        const storedKey = localStorage.getItem(DB_KEYS.DAILY_ORDER_KEY);
+        if (storedKey) {
+            const { date, counter } = JSON.parse(storedKey);
+            if (date === today) return counter + 1;
         }
-        function getDailyOrderNumber() {
-            const today = getTodayStr();
-            const stored = localStorage.getItem(DB_KEYS.DAILY_ORDER_KEY);
-            if (stored) {
-                const { date, counter } = JSON.parse(stored);
-                if (date === today) return counter + 1;
-            }
-            return 1;
+        return 1;
+    }
+    function saveDailyOrderNumber(counter) {
+        const today = getTodayStr();
+        localStorage.setItem(DB_KEYS.DAILY_ORDER_KEY, JSON.stringify({ date: today, counter: counter }));
+    }
+    function updateStatus(msg, isError=false) {
+        const el = document.getElementById('status-text');
+        if (el) el.innerHTML = isError ? `<span style="color:#ff6b6b;">⚠️ ${msg}</span>` : `<span style="color:green;">✅ ${msg}</span>`;
+    }
+    function showLoading() { document.getElementById('status-text').innerHTML = '<div class="loader"></div>加载中...'; }
+    function handleImageError(img) { img.onerror=null; img.parentElement.innerHTML='<div class="no-image">图片加载失败</div>'; }
+    function previewImage(inpId, prevId) {
+        const inp = document.getElementById(inpId), prev = document.getElementById(prevId);
+        if(!inp||!prev) return;
+        const url = inp.value.trim();
+        if(url) { prev.src=url; prev.style.display='block'; prev.onerror=()=>prev.style.display='none'; }
+        else { prev.style.display='none'; prev.src=''; }
+    }
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) modal.style.display = 'flex';
+        if(id === 'addModal') {
+            updateCategorySelects('newProdCat', 'newProdSubCat');
+            document.getElementById('addSearchInput').value = '';
+            document.getElementById('addSearchResults').classList.remove('visible');
+            document.getElementById('addExactMatch').classList.remove('visible');
         }
-        function saveDailyOrderNumber(counter) {
-            localStorage.setItem(DB_KEYS.DAILY_ORDER_KEY, JSON.stringify({ date: getTodayStr(), counter }));
-        }
-        function updateStatus(msg, isError=false) {
-            const el = document.getElementById('status-text');
-            if (el) el.innerHTML = isError ? `<span style="color:#ff6b6b;">⚠️ ${msg}</span>` : `<span style="color:green;">✅ ${msg}</span>`;
-        }
-        function handleImageError(img) { img.onerror = null; img.parentElement.innerHTML = '<div class="no-image">图片加载失败</div>'; }
-        function previewImage(inpId, prevId) {
-            const inp = document.getElementById(inpId), prev = document.getElementById(prevId);
-            if (!inp || !prev) return;
-            const url = inp.value.trim();
-            if (url) { prev.src = url; prev.style.display = 'block'; prev.onerror = () => prev.style.display = 'none'; }
-            else { prev.style.display = 'none'; prev.src = ''; }
-        }
-        function openModal(id) {
-            document.getElementById(id).style.display = 'flex';
-            if (id === 'addModal') {
-                updateCategorySelects('newProdCat', 'newProdSubCat');
-                document.getElementById('addSearchInput').value = '';
-                document.getElementById('addSearchResults').classList.remove('visible');
-                document.getElementById('addExactMatch').style.display = 'none';
-            }
-            if (id === 'manageModal') updateManageTable();
-            if (id === 'ordersModal') showOrders();
-            if (id === 'categoryManageModal') { renderManageCatList(); document.getElementById('subCatManageArea').style.display = 'none'; }
-        }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        if(id === 'manageModal') updateManageTable();
+        if(id === 'ordersModal') showOrders();
+        if(id === 'categoryManageModal') { renderManageCatList(); document.getElementById('subCatManageArea').style.display='none'; }
+    }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    window.onclick = (e) => { if(e.target.classList.contains('modal')) e.target.style.display='none'; };
 
-        // ==================== 上下文菜单 ====================
-        function hideContextMenu() {
-            document.getElementById('contextMenu').classList.remove('visible');
-            document.getElementById('contextMenuBackdrop').classList.remove('visible');
-            contextMenuTargetProductId = null;
-        }
-        function showContextMenu(x, y, productId) {
-            contextMenuTargetProductId = productId;
-            const menu = document.getElementById('contextMenu');
-            const backdrop = document.getElementById('contextMenuBackdrop');
-            menu.classList.add('visible');
-            backdrop.classList.add('visible');
-            const rect = menu.getBoundingClientRect();
-            let px = x, py = y;
-            if (px + rect.width > window.innerWidth - 10) px = window.innerWidth - rect.width - 10;
-            if (py + rect.height > window.innerHeight - 10) py = window.innerHeight - rect.height - 10;
-            if (px < 5) px = 5;
-            if (py < 5) py = 5;
-            menu.style.left = px + 'px';
-            menu.style.top = py + 'px';
-        }
-
-        document.getElementById('ctxEditProduct').addEventListener('click', () => {
-            const pid = contextMenuTargetProductId;
-            hideContextMenu();
-            if (pid !== null) editProduct(pid);
-        });
-        document.getElementById('ctxDeleteProduct').addEventListener('click', () => {
-            const pid = contextMenuTargetProductId;
-            hideContextMenu();
-            if (pid !== null) deleteProduct(pid);
-        });
-        document.getElementById('contextMenuBackdrop').addEventListener('click', hideContextMenu);
-        document.getElementById('contextMenuBackdrop').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            hideContextMenu();
-        });
-
-        function clearLongPress() {
-            if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
-            longPressTriggered = false;
-        }
-
-        // ==================== 长按/右键处理 ====================
-        function handleProductTouchStart(e, productId) {
-            if (e.touches.length > 1) { clearLongPress(); return; }
-            const touch = e.touches[0];
-            longPressStartX = touch.clientX;
-            longPressStartY = touch.clientY;
-            longPressTriggered = false;
-            clearLongPress();
-            longPressTimer = setTimeout(() => {
-                longPressTriggered = true;
-                const card = e.currentTarget;
-                card.classList.add('long-press-active');
-                setTimeout(() => card.classList.remove('long-press-active'), 250);
-                if (navigator.vibrate) navigator.vibrate(30);
-                showContextMenu(longPressStartX, longPressStartY, productId);
-            }, LONG_PRESS_DURATION);
-        }
-        function handleProductTouchMove(e) {
-            if (!longPressTimer || e.touches.length > 1) { clearLongPress(); return; }
-            const touch = e.touches[0];
-            if (Math.abs(touch.clientX - longPressStartX) > LONG_PRESS_MOVE_THRESHOLD ||
-                Math.abs(touch.clientY - longPressStartY) > LONG_PRESS_MOVE_THRESHOLD) {
-                clearLongPress();
-            }
-        }
-        function handleProductTouchEnd(e, productId) {
-            const wasLongPress = longPressTriggered;
-            clearLongPress();
-            if (wasLongPress) {
-                e.preventDefault();
-                e.stopPropagation();
-                const card = e.currentTarget;
-                const preventClick = (ev) => { ev.preventDefault(); ev.stopPropagation(); card.removeEventListener('click', preventClick, true); };
-                card.addEventListener('click', preventClick, true);
-                setTimeout(() => card.removeEventListener('click', preventClick, true), 100);
-            }
-            // 短按不再加入购物车（由按钮独立处理）
-        }
-        function handleProductContextMenu(e, productId) {
-            e.preventDefault();
-            e.stopPropagation();
-            clearLongPress();
-            showContextMenu(e.clientX, e.clientY, productId);
-        }
-
-        // ==================== 搜索功能 ====================
-        function setupAddSearchListener() {
-            const input = document.getElementById('addSearchInput');
-            if (!input) return;
-            const newInput = input.cloneNode(true);
-            input.parentNode.replaceChild(newInput, input);
-            newInput.addEventListener('input', () => {
-                const query = newInput.value.trim().toLowerCase();
-                const resultsDiv = document.getElementById('addSearchResults');
-                const exactDiv = document.getElementById('addExactMatch');
-                if (query.length === 0) {
-                    resultsDiv.classList.remove('visible');
-                    resultsDiv.innerHTML = '';
-                    exactDiv.style.display = 'none';
-                    return;
-                }
-                const matches = products.filter(p => p.name.toLowerCase().includes(query));
-                const exact = products.find(p => p.name.toLowerCase() === query);
-                if (exact) {
-                    exactDiv.style.display = 'block';
-                    exactDiv.textContent = `⚠️ 商品"${exact.name}"已存在（¥${exact.price.toFixed(2)}，库存${exact.stock}），点击编辑`;
-                    exactDiv.onclick = () => { closeModal('addModal'); editProduct(exact.id); };
-                } else {
-                    exactDiv.style.display = 'none';
-                }
-                if (matches.length > 0) {
-                    resultsDiv.classList.add('visible');
-                    resultsDiv.innerHTML = '';
-                    matches.slice(0, 8).forEach(p => {
-                        const item = document.createElement('div');
-                        item.className = 'search-result-item';
-                        item.innerHTML = `<span class="result-name">${p.name}</span><span class="result-info">¥${p.price.toFixed(2)} | 库存:${p.stock}</span><span class="result-badge">编辑</span>`;
-                        item.addEventListener('click', () => { closeModal('addModal'); editProduct(p.id); });
-                        resultsDiv.appendChild(item);
-                    });
-                    if (matches.length > 8) {
-                        const more = document.createElement('div');
-                        more.className = 'search-no-result';
-                        more.textContent = `...还有 ${matches.length - 8} 个匹配商品`;
-                        resultsDiv.appendChild(more);
-                    }
-                } else {
-                    resultsDiv.classList.add('visible');
-                    resultsDiv.innerHTML = '<div class="search-no-result">✅ 未找到匹配商品，将创建新商品</div>';
-                }
-            });
-            document.addEventListener('click', (e) => {
-                const resultsDiv = document.getElementById('addSearchResults');
-                const inputEl = document.getElementById('addSearchInput');
-                if (resultsDiv && inputEl && !inputEl.contains(e.target) && !resultsDiv.contains(e.target)) {
-                    setTimeout(() => {
-                        if (!document.getElementById('addSearchInput')?.contains(document.activeElement)) {
-                            resultsDiv.classList.remove('visible');
-                            document.getElementById('addExactMatch').style.display = 'none';
-                        }
-                    }, 200);
-                }
-            });
-        }
-
-        // ==================== 数据存储 ====================
-        function loadFromStorage() {
-            try {
-                const sp = localStorage.getItem(DB_KEYS.PRODUCTS);
-                if (sp) { products = JSON.parse(sp); products.forEach(p => { if (!p.imageUrl) p.imageUrl = ''; }); }
-                const so = localStorage.getItem(DB_KEYS.ORDERS); if (so) orders = JSON.parse(so);
-                const sc = localStorage.getItem(DB_KEYS.ORDER_COUNTER); if (sc) orderCounter = parseInt(sc) || 1;
-                const cats = localStorage.getItem(DB_KEYS.CATEGORIES);
-                if (cats) categoryData = JSON.parse(cats); else categoryData = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
-                return true;
-            } catch (e) { return false; }
-        }
-        function saveToStorage() {
+    // 数据存储
+    function loadFromStorage() {
+        try {
+            const sp = localStorage.getItem(DB_KEYS.PRODUCTS); if(sp) { products=JSON.parse(sp); products.forEach(p=>{if(!p.imageUrl)p.imageUrl='';}); }
+            const so = localStorage.getItem(DB_KEYS.ORDERS); if(so) orders=JSON.parse(so);
+            const sc = localStorage.getItem(DB_KEYS.ORDER_COUNTER); if(sc) orderCounter=parseInt(sc)||1;
+            const cats = localStorage.getItem(DB_KEYS.CATEGORIES); if(cats) categoryData=JSON.parse(cats); else categoryData=JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+            return true;
+        } catch(e) { updateStatus('加载数据失败',true); return false; }
+    }
+    function saveToStorage() {
+        try {
             localStorage.setItem(DB_KEYS.PRODUCTS, JSON.stringify(products));
             localStorage.setItem(DB_KEYS.ORDERS, JSON.stringify(orders));
             localStorage.setItem(DB_KEYS.ORDER_COUNTER, orderCounter.toString());
             localStorage.setItem(DB_KEYS.CATEGORIES, JSON.stringify(categoryData));
-        }
+        } catch(e) {}
+    }
 
-        // ==================== 商品渲染 ====================
-        function renderCategoryFilters() {
-            const bar = document.getElementById('mainFilterBar'); bar.innerHTML = '';
-            const allBtn = document.createElement('button'); allBtn.className = `filter-btn ${currentFilterMain==='all'?'active':''}`; allBtn.textContent='全部'; allBtn.onclick=()=>filterProducts('all'); bar.appendChild(allBtn);
-            categoryData.forEach(cat => { const btn = document.createElement('button'); btn.className = `filter-btn ${currentFilterMain===cat.name?'active':''}`; btn.textContent=cat.name; btn.onclick=()=>filterProducts(cat.name); bar.appendChild(btn); });
-            const addBtn = document.createElement('button'); addBtn.className='filter-btn'; addBtn.style.marginLeft='auto'; addBtn.style.backgroundColor='var(--primary-color)'; addBtn.style.color='white'; addBtn.innerHTML='+ 添加商品'; addBtn.onclick=()=>openModal('addModal'); bar.appendChild(addBtn);
-            renderSubFilterBar();
-        }
-        function renderSubFilterBar() {
-            const bar = document.getElementById('subFilterBar'); bar.innerHTML='';
-            if(currentFilterMain==='all') return;
-            const cat = categoryData.find(c=>c.name===currentFilterMain);
-            if(cat && cat.subs.length) {
-                const allSub = document.createElement('button'); allSub.className=`sub-filter-btn ${currentFilterSub==='all'?'active':''}`; allSub.textContent='全部子类'; allSub.onclick=()=>filterProducts(currentFilterMain,'all'); bar.appendChild(allSub);
-                cat.subs.forEach(sub => { const b = document.createElement('button'); b.className=`sub-filter-btn ${currentFilterSub===sub?'active':''}`; b.textContent=sub; b.onclick=()=>filterProducts(currentFilterMain,sub); bar.appendChild(b); });
-            }
-        }
-        function filterProducts(cat, sub='all') { currentFilterMain=cat; currentFilterSub=sub; renderCategoryFilters(); renderProducts(cat, sub); }
+    // Firebase
+    async function initializeFirebase() {
+        try {
+            showLoading();
+            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js");
+            const { getDatabase } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js");
+            firebaseApp = initializeApp(FIREBASE_CONFIG, "cat_shit_bao");
+            firebaseDb = getDatabase(firebaseApp);
+            firebaseInitialized = true;
+            updateStatus('Firebase连接成功');
+            await setupFirebaseListeners();
+            return true;
+        } catch(e) { updateStatus('Firebase连接失败，使用本地模式',true); return false; }
+    }
+    async function setupFirebaseListeners() {
+        if(!firebaseDb) return;
+        const { ref, onValue } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js");
+        onValue(ref(firebaseDb, 'products'), (snap) => {
+            const data = snap.val(); if(data) { products = Object.values(data); products.forEach(p=>{if(!p.imageUrl)p.imageUrl='';}); saveToStorage(); renderProducts(currentFilterMain, currentFilterSub); }
+        });
+        onValue(ref(firebaseDb, 'categories'), (snap) => {
+            const data = snap.val(); if(data && Array.isArray(data)) { categoryData = data; saveToStorage(); renderCategoryFilters(); }
+        });
+    }
+    async function syncProductsToFirebase() {
+        if(!firebaseInitialized) return;
+        try { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); const obj = {}; products.forEach(p=>obj[p.id]=p); await set(ref(firebaseDb, 'products'), obj); } catch(e) {}
+    }
+    async function syncCategoriesToFirebase() {
+        if(!firebaseInitialized) return;
+        try { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(ref(firebaseDb, 'categories'), categoryData); } catch(e) {}
+    }
 
-        function renderProducts(cat='all', sub='all') {
-            const grid = document.getElementById('productGrid'); grid.innerHTML='';
-            let filtered = products;
-            if(cat!=='all') { filtered = filtered.filter(p=>p.category===cat); if(sub!=='all') filtered = filtered.filter(p=>p.subCategory===sub); }
-            if(!filtered.length) { grid.innerHTML='<div class="no-products"><div>暂无商品</div><button onclick="openModal(\'addModal\')" style="background:var(--primary-color); color:white; margin-top:10px;">+ 添加商品</button></div>'; return; }
-            filtered.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.setAttribute('data-product-id', p.id);
-                // 移除卡片整体click事件，改为按钮独立绑定
-                card.addEventListener('touchstart', e => handleProductTouchStart(e, p.id), { passive: false });
-                card.addEventListener('touchmove', handleProductTouchMove, { passive: false });
-                card.addEventListener('touchend', e => handleProductTouchEnd(e, p.id), { passive: false });
-                card.addEventListener('touchcancel', clearLongPress);
-                card.addEventListener('contextmenu', e => handleProductContextMenu(e, p.id));
-                let imgHtml = p.imageUrl ? `<div class="product-image-container"><img class="product-image" src="${p.imageUrl}" onerror="handleImageError(this)"></div>` : `<div class="product-image-container"><div class="no-image">暂无图片</div></div>`;
-                let subTag = p.subCategory ? `<span class="product-sub-tag">${p.subCategory}</span>` : '';
-                card.innerHTML = `
-                    <span class="product-stock">库存: ${p.stock}</span>
-                    <div class="product-tag-container"><span class="product-tag">${p.category}</span>${subTag}</div>
-                    ${imgHtml}
-                    <span class="product-price">¥ ${p.price.toFixed(2)}</span>
-                    <div class="product-name">
-                        <span class="product-name-text">${p.name}</span>
-                        <button class="add-to-cart-btn" id="addBtn-${p.id}">+</button>
-                    </div>
-                `;
-                const addBtn = card.querySelector(`#addBtn-${p.id}`);
-                addBtn.addEventListener('click', e => { e.stopPropagation(); addToCart(p.id); });
-                addBtn.addEventListener('touchend', e => { e.stopPropagation(); e.preventDefault(); addToCart(p.id); });
-                grid.appendChild(card);
-            });
+    // 渲染分类筛选
+    function renderCategoryFilters() {
+        const bar = document.getElementById('mainFilterBar'); bar.innerHTML = '';
+        const allBtn = document.createElement('button'); allBtn.className=`filter-btn ${currentFilterMain==='all'?'active':''}`; allBtn.textContent='全部'; allBtn.onclick=()=>filterProducts('all'); bar.appendChild(allBtn);
+        categoryData.forEach(cat=>{ const btn=document.createElement('button'); btn.className=`filter-btn ${currentFilterMain===cat.name?'active':''}`; btn.textContent=cat.name; btn.onclick=()=>filterProducts(cat.name); bar.appendChild(btn); });
+        const addBtn=document.createElement('button'); addBtn.className='filter-btn'; addBtn.style.marginLeft='auto'; addBtn.style.backgroundColor='var(--primary-color)'; addBtn.style.color='white'; addBtn.innerHTML='+ 添加商品'; addBtn.onclick=()=>{ openModal('addModal'); }; bar.appendChild(addBtn);
+        renderSubFilterBar();
+    }
+    function renderSubFilterBar() {
+        const bar = document.getElementById('subFilterBar'); bar.innerHTML = '';
+        if(currentFilterMain==='all') return;
+        const cat = categoryData.find(c=>c.name===currentFilterMain);
+        if(cat && cat.subs && cat.subs.length) {
+            const allSub = document.createElement('button'); allSub.className=`sub-filter-btn ${currentFilterSub==='all'?'active':''}`; allSub.textContent='全部子类'; allSub.onclick=()=>filterProducts(currentFilterMain,'all'); bar.appendChild(allSub);
+            cat.subs.forEach(sub=>{ const b=document.createElement('button'); b.className=`sub-filter-btn ${currentFilterSub===sub?'active':''}`; b.textContent=sub; b.onclick=()=>filterProducts(currentFilterMain,sub); bar.appendChild(b); });
         }
+    }
+    function filterProducts(cat, sub='all') { currentFilterMain=cat; currentFilterSub=sub; renderCategoryFilters(); renderProducts(cat,sub); }
 
-        // ==================== 购物车 ====================
-        function renderCart() {
-            const container = document.getElementById('cartItems'); container.innerHTML='';
-            let total = 0, empty = true;
-            for(let [id, qty] of Object.entries(cart)) {
-                if(qty>0) { empty=false; const p = products.find(p=>p.id==id); if(p) { total+=p.price*qty;
-                    container.innerHTML += `<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">${p.name}</div><div class="cart-item-price">¥ ${p.price.toFixed(2)} x ${qty}</div></div><div class="cart-controls"><button class="qty-btn" onclick="updateQty(${id},-1)">-</button><span>${qty}</span><button class="qty-btn" onclick="updateQty(${id},1)">+</button></div></div>`; } }
-            }
-            if(empty) container.innerHTML='<div style="text-align:center;color:#999;margin-top:50px;">购物车为空</div>';
-            document.getElementById('totalAmount').innerText = `¥ ${total.toFixed(2)}`;
-        }
-        function addToCart(id) { const p = products.find(p=>p.id===id); if(!p) return; if(p.stock<=0) { alert(`"${p.name}" 库存不足`); return; } cart[id] = (cart[id]||0)+1; renderCart(); }
-        function updateQty(id, ch) {
-            if(cart[id]) { cart[id]+=ch; if(cart[id]<=0) delete cart[id]; else { const p = products.find(p=>p.id==id); if(p && cart[id]>p.stock) { cart[id]=p.stock; alert(`库存只有 ${p.stock} 个`); } } renderCart(); }
-        }
-        function clearCart() { if(Object.keys(cart).length===0) { alert('购物车已经是空的'); return; } if(confirm('清空购物车？')) { cart={}; renderCart(); } }
+    // 上下文菜单
+    function hideContextMenu() {
+        document.getElementById('contextMenu').classList.remove('visible');
+        document.getElementById('contextMenuBackdrop').classList.remove('visible');
+        contextMenuTargetId = null;
+    }
+    function showContextMenu(x, y, productId) {
+        contextMenuTargetId = productId;
+        const menu = document.getElementById('contextMenu');
+        const backdrop = document.getElementById('contextMenuBackdrop');
+        menu.classList.add('visible');
+        backdrop.classList.add('visible');
+        const rect = menu.getBoundingClientRect();
+        let posX = x, posY = y;
+        if (posX + rect.width > window.innerWidth - 10) posX = window.innerWidth - rect.width - 10;
+        if (posY + rect.height > window.innerHeight - 10) posY = window.innerHeight - rect.height - 10;
+        if (posX < 5) posX = 5;
+        if (posY < 5) posY = 5;
+        menu.style.left = posX + 'px';
+        menu.style.top = posY + 'px';
+    }
 
-        // ==================== 订单 ====================
-        function checkout() {
-            if(Object.keys(cart).length===0) { alert('购物车是空的'); return; }
-            for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p && qty>p.stock) { alert(`"${p.name}" 库存不足`); return; } }
-            const list = document.getElementById('confirmList'); list.innerHTML=''; let total=0;
-            for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { total+=p.price*qty; list.innerHTML += `<div style="display:flex;justify-content:space-between;"><span>${p.name} x${qty}</span><span>¥ ${(p.price*qty).toFixed(2)}</span></div>`; } }
-            document.getElementById('confirmTotal').innerText=`¥ ${total.toFixed(2)}`;
-            document.getElementById('orderSuccessMessage').style.display='none';
-            openModal('confirmModal');
+    document.getElementById('ctxEditProduct').addEventListener('click', () => {
+        if (contextMenuTargetId !== null) {
+            editProduct(contextMenuTargetId);
         }
-        async function processOrder() {
-            document.getElementById('orderSuccessMessage').style.display='block';
-            let total=0, items=[];
-            for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { const it=p.price*qty; total+=it; items.push({productId:p.id, name:p.name, quantity:qty, price:p.price, total:it}); } }
-            const now = new Date();
-            const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            const dailySeq = getDailyOrderNumber();
-            const orderNo = `#${dailySeq.toString().padStart(3,'0')}`;
-            saveDailyOrderNumber(dailySeq);
-            const order = { id:orderCounter, orderNo, time:timeStr, items, total };
-            orders.unshift(order); orderCounter++;
-            for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { p.stock-=qty; if(p.stock<0) p.stock=0; } }
-            saveToStorage(); renderProducts(currentFilterMain, currentFilterSub);
-            if(firebaseInitialized) { try { await syncProductsToFirebase(); const { ref, push, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(push(ref(firebaseDb, 'orders')), { orderNo, time:timeStr, items, total, status:'completed' }); } catch(e) {} }
-            closeModal('confirmModal');
-            cart = {}; renderCart();
-            alert(`订单 ${orderNo} 提交成功！`);
-            try { await printOrderReceipt(order); } catch(e) { updateStatus('打印失败，可手动重试', true); }
+        hideContextMenu();
+    });
+    document.getElementById('ctxDeleteProduct').addEventListener('click', () => {
+        if (contextMenuTargetId !== null) {
+            deleteProduct(contextMenuTargetId);
         }
-        function showOrders() {
-            const tbody = document.querySelector('#ordersTable tbody'); tbody.innerHTML='';
-            if(!orders.length) { tbody.innerHTML='<tr><td colspan="5">暂无订单</td></tr>'; document.getElementById('orderCount').textContent='0'; return; }
-            orders.forEach(o => { tbody.innerHTML += `<tr><td>${o.orderNo}</td><td>${o.time}</td><td>${o.items.reduce((s,i)=>s+i.quantity,0)} 件</td><td>¥ ${o.total.toFixed(2)}</td><td><button onclick="viewOrderDetails(${o.id})">查看</button></td></tr>`; });
-            document.getElementById('orderCount').textContent=orders.length;
+        hideContextMenu();
+    });
+    document.getElementById('contextMenuBackdrop').addEventListener('click', hideContextMenu);
+    document.getElementById('contextMenuBackdrop').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        hideContextMenu();
+    });
+    // 全局点击隐藏菜单
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.context-menu') && !e.target.closest('.product-card')) {
+            hideContextMenu();
         }
-        function viewOrderDetails(id) { const o=orders.find(o=>o.id===id); if(!o) return; let det=`订单号:${o.orderNo}\n时间:${o.time}\n`; o.items.forEach(i=>det+=`${i.name} x${i.quantity} ¥${i.total.toFixed(2)}\n`); det+=`合计:¥${o.total.toFixed(2)}`; alert(det); }
+    });
+    document.addEventListener('scroll', hideContextMenu, { passive: true });
 
-        // ==================== 商品管理 ====================
-        function updateCategorySelects(mainId, subId, selMain='', selSub='') {
-            const main=document.getElementById(mainId); if(!main) return; main.innerHTML='';
-            categoryData.forEach(c=>{ const opt=document.createElement('option'); opt.value=c.name; opt.textContent=c.name; if(c.name===selMain) opt.selected=true; main.appendChild(opt); });
-            updateSubCatSelect(mainId, subId, selSub);
+    function clearLongPressTimer() {
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
         }
-        function updateSubCatSelect(mainId, subId, selSub='') {
-            const main=document.getElementById(mainId), sub=document.getElementById(subId); if(!main || !sub) return;
-            const cat=categoryData.find(c=>c.name===main.value); sub.innerHTML='<option value="">无子分类</option>';
-            if(cat && cat.subs) cat.subs.forEach(s=>{ const opt=document.createElement('option'); opt.value=s; opt.textContent=s; if(s===selSub) opt.selected=true; sub.appendChild(opt); });
-        }
-        async function addProduct() {
-            const name=document.getElementById('newProdName').value.trim(), cat=document.getElementById('newProdCat').value, sub=document.getElementById('newProdSubCat').value;
-            const img=document.getElementById('newProdImageUrl').value.trim(), price=parseFloat(document.getElementById('newProdPrice').value), stock=parseInt(document.getElementById('newProdStock').value);
-            if(!name || isNaN(price)||price<=0 || isNaN(stock)||stock<0) { alert('信息不完整'); return; }
-            const exist = products.find(p=>p.name.toLowerCase()===name.toLowerCase());
-            if(exist) { if(confirm(`"${name}"已存在，更新库存？`)) { exist.stock+=stock; saveToStorage(); renderProducts(); closeModal('addModal'); if(firebaseInitialized) await syncProductsToFirebase(); } return; }
-            const newId = products.length ? Math.max(...products.map(p=>p.id))+1 : 1;
-            products.push({ id:newId, name, category:cat, subCategory:sub, imageUrl:img, price, stock });
-            saveToStorage(); renderProducts(); closeModal('addModal');
-            ['newProdName','newProdImageUrl','newProdPrice'].forEach(id=>document.getElementById(id).value='');
-            document.getElementById('newProdStock').value='10'; document.getElementById('newProdImagePreview').style.display='none';
-            document.getElementById('addSearchInput').value=''; document.getElementById('addSearchResults').classList.remove('visible'); document.getElementById('addExactMatch').style.display='none';
-            if(firebaseInitialized) await syncProductsToFirebase();
-        }
-        function updateManageTable() {
-            const tbody = document.querySelector('#manageTable tbody'); tbody.innerHTML='';
-            if(!products.length) { tbody.innerHTML='<tr><td colspan="7">暂无商品</td></tr>'; document.getElementById('productCount').textContent='0'; return; }
-            products.forEach(p=>{
-                let catD = p.category+(p.subCategory?` / ${p.subCategory}`:'');
-                let imgCell = p.imageUrl ? `<td><div style="width:40px;height:40px;"><img src="${p.imageUrl}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='图片失效'"></div></td>` : '<td>无图片</td>';
-                tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td>${imgCell}<td>${catD}</td><td>¥${p.price.toFixed(2)}</td><td>${p.stock}</td><td><button onclick="deleteProduct(${p.id})">删除</button> <button onclick="editProduct(${p.id})">编辑</button></td></tr>`;
-            });
-            document.getElementById('productCount').textContent=products.length;
-        }
-        async function deleteProduct(id) {
-            const p = products.find(p=>p.id===id); if(!p) return;
-            if(!confirm(`删除 "${p.name}"？`)) return;
-            products = products.filter(p=>p.id!==id); if(cart[id]) delete cart[id];
-            hideContextMenu(); saveToStorage(); renderProducts(); renderCart(); updateManageTable();
-            if(firebaseInitialized) await syncProductsToFirebase();
-        }
-        function editProduct(id) {
-            const p = products.find(p=>p.id===id); if(!p) return;
-            document.getElementById('editProdId').value=id; document.getElementById('editProdName').value=p.name;
-            document.getElementById('editProdImageUrl').value=p.imageUrl||''; document.getElementById('editProdPrice').value=p.price;
-            document.getElementById('editProdStock').value=p.stock;
-            updateCategorySelects('editProdCat','editProdSubCat', p.category, p.subCategory||'');
-            const prev=document.getElementById('editProdImagePreview');
-            if(p.imageUrl) { prev.src=p.imageUrl; prev.style.display='block'; } else prev.style.display='none';
-            openModal('editModal');
-        }
-        async function saveEditedProduct() {
-            const id=parseInt(document.getElementById('editProdId').value), name=document.getElementById('editProdName').value.trim();
-            const cat=document.getElementById('editProdCat').value, sub=document.getElementById('editProdSubCat').value;
-            const img=document.getElementById('editProdImageUrl').value.trim(), price=parseFloat(document.getElementById('editProdPrice').value), stock=parseInt(document.getElementById('editProdStock').value);
-            if(!name || isNaN(price)||price<=0 || isNaN(stock)||stock<0) { alert('信息不完整'); return; }
-            const p=products.find(p=>p.id===id); if(!p) return;
-            if(products.some(x=>x.id!==id && x.name.toLowerCase()===name.toLowerCase())) { alert('名称重复'); return; }
-            Object.assign(p, { name, category:cat, subCategory:sub, imageUrl:img, price, stock });
-            saveToStorage(); renderProducts(); renderCart(); updateManageTable();
-            if(firebaseInitialized) await syncProductsToFirebase();
-            closeModal('editModal');
-        }
+        longPressTriggered = false;
+    }
 
-        // ==================== 分类管理 ====================
-        function renderManageCatList() {
-            const list=document.getElementById('manageCatList'); list.innerHTML='';
-            categoryData.forEach((c,i)=>{ const d=document.createElement('div'); d.className=`cat-manage-item ${selectedManageCatIndex===i?'selected':''}`; d.innerText=c.name; d.onclick=()=>{ selectedManageCatIndex=i; renderManageCatList(); renderManageSubCatList(i); }; list.appendChild(d); });
-        }
-        function renderManageSubCatList(idx) {
-            const cat=categoryData[idx]; document.getElementById('subCatManageArea').style.display='block';
-            document.getElementById('selectedCatName').innerText=cat.name; const list=document.getElementById('manageSubCatList'); list.innerHTML='';
-            if(!cat.subs||!cat.subs.length) list.innerHTML='<span>无子分类</span>';
-            else cat.subs.forEach((s,i)=>{ const chip=document.createElement('div'); chip.className='sub-cat-chip'; chip.innerHTML=`${s} <span onclick="deleteSubCategory(${idx},${i})" style="cursor:pointer;color:red;">×</span>`; list.appendChild(chip); });
-        }
-        async function addMainCategory() { const name=document.getElementById('newCatNameInput').value.trim(); if(!name) return; if(categoryData.some(c=>c.name===name)) { alert('已存在'); return; } categoryData.push({ name, subs:[] }); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageCatList(); renderCategoryFilters(); document.getElementById('newCatNameInput').value=''; }
-        async function deleteSelectedMainCategory() { if(selectedManageCatIndex===-1) return; const cat=categoryData[selectedManageCatIndex]; if(products.some(p=>p.category===cat.name)) { alert('有商品使用此分类'); return; } if(confirm(`删除 "${cat.name}"？`)) { categoryData.splice(selectedManageCatIndex,1); selectedManageCatIndex=-1; document.getElementById('subCatManageArea').style.display='none'; saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageCatList(); renderCategoryFilters(); } }
-        async function addSubCategory() { if(selectedManageCatIndex===-1) return; const name=document.getElementById('newSubCatNameInput').value.trim(); if(!name) return; const cat=categoryData[selectedManageCatIndex]; if(!cat.subs) cat.subs=[]; if(cat.subs.includes(name)) { alert('已存在'); return; } cat.subs.push(name); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageSubCatList(selectedManageCatIndex); renderCategoryFilters(); document.getElementById('newSubCatNameInput').value=''; }
-        async function deleteSubCategory(catIdx, subIdx) { event.stopPropagation(); const cat=categoryData[catIdx], sub=cat.subs[subIdx]; if(products.some(p=>p.category===cat.name && p.subCategory===sub)) { alert('有商品使用此子分类'); return; } if(confirm(`删除 "${sub}"？`)) { cat.subs.splice(subIdx,1); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageSubCatList(catIdx); renderCategoryFilters(); } }
+    // 渲染商品（包含触摸优化和长按）
+    function renderProducts(cat='all', sub='all') {
+        const grid = document.getElementById('productGrid'); grid.innerHTML='';
+        let filtered = products;
+        if(cat!=='all') { filtered = filtered.filter(p=>p.category===cat); if(sub!=='all') filtered = filtered.filter(p=>p.subCategory===sub); }
+        if(filtered.length===0) { grid.innerHTML=`<div class="no-products"><div>暂无商品</div><button onclick="openModal('addModal')" style="background:var(--primary-color); color:white; margin-top:10px;">+ 添加商品</button></div>`; return; }
+        filtered.forEach(p=>{
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.setAttribute('data-product-id', p.id);
 
-        // ==================== 数据导入导出 ====================
-        function exportData() {
-            const data = { products, orders, orderCounter, categories: categoryData, exportTime: new Date().toISOString() };
-            const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `猫屎宝数据_${new Date().toISOString().slice(0,10)}.json`; a.click();
-        }
-        function importData() {
-            const inp = document.createElement('input'); inp.type='file'; inp.accept='.json';
-            inp.onchange = async e => {
-                const file = e.target.files[0]; if(!file) return;
-                const reader = new FileReader();
-                reader.onload = async ev => {
-                    try {
-                        const data = JSON.parse(ev.target.result);
-                        if(!data.products || !Array.isArray(data.products)) { alert('格式错误'); return; }
-                        if(confirm(`导入 ${data.products.length} 个商品？`)) {
-                            products = data.products; orders = data.orders || []; orderCounter = data.orderCounter || 1;
-                            categoryData = data.categories || DEFAULT_CATEGORIES;
-                            products.forEach(p=>{ if(!p.imageUrl) p.imageUrl=''; });
-                            saveToStorage(); renderCategoryFilters(); renderProducts();
-                            if(firebaseInitialized) { await syncProductsToFirebase(); await syncCategoriesToFirebase(); }
-                        }
-                    } catch(ex) { alert('导入失败'); }
-                };
-                reader.readAsText(file);
-            };
-            inp.click();
-        }
-        async function clearAllData() {
-            if(!confirm('清空所有数据？不可恢复！')) return;
-            if(!confirm('再次确认清空？')) return;
-            products=[]; orders=[]; cart={}; orderCounter=1; categoryData=JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
-            saveToStorage(); renderCategoryFilters(); renderProducts(); renderCart();
-            if(firebaseInitialized) { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(ref(firebaseDb, 'products'), {}); await set(ref(firebaseDb, 'categories'), categoryData); }
-        }
+            // 触摸事件处理
+            card.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 1) return;
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                touchMoved = false;
+                longPressTriggered = false;
+                clearLongPressTimer();
+                longPressTimer = setTimeout(() => {
+                    longPressTriggered = true;
+                    card.classList.add('long-press-active');
+                    setTimeout(() => card.classList.remove('long-press-active'), 250);
+                    if (navigator.vibrate) navigator.vibrate(30);
+                    showContextMenu(touchStartX, touchStartY, p.id);
+                }, 600);
+            }, { passive: false });
 
-        // ==================== 打印模块 (含新增GBK字符) ====================
-        const customGbkMap = new Map([
-            ['《',0xA1B6],['我',0xCED2],['在',0xD4DA],['猫',0xC3A8],['饭',0xB7B9],['屋',0xCEDD],['很',0xBAD4],['想',0xCFEB],['你',0xC4E3],['》',0xA1B7],
-            ['订',0xB6A9],['单',0xB5A5],['号',0xBAC5],['时',0xCAB1],['间',0xBCE4],['感',0xB8D0],['谢',0xD0BB],['惠',0xBBDD],['顾',0xB9CB],['！',0xA3A1],
-            ['总',0xD7DC],['计',0xBCC6],['：',0xA3BA],['#',0x23],['万',0xCDF2],['花',0xBBA8],['天',0xCCEC],['策',0xB2DF],['纯',0xB4BF],['阳',0xD1F4],
-            ['七',0xC6DF],['秀',0xD0E3],['藏',0xB2D8],['剑',0xBDA3],['五',0xCEE5],['毒',0xB6BE],['唐',0xCCC6],['门',0xC3C5],['明',0xC3F7],['教',0xBDCC],
-            ['丐',0xD8A4],['帮',0xB0EF],['苍',0xB2D4],['云',0xD4C6],['长',0xB3A4],['歌',0xB8E8],['霸',0xB0D4],['刀',0xB5B6],['蓬',0xC5EE],['莱',0xC0B3],
-            ['凌',0xC1E8],['霄',0xCFF6],['阁',0xB8F3],['衍',0xD1DC],['宗',0xD7DA],['北',0xB1B1],['药',0xD2A9],['灵',0xC1E9],['山',0xC9BD],['庄',0xD7AF],
-            ['生',0xC9FA],['一',0xD2BB],['枪',0xC7B9],['晨',0xB3BF],['曦',0xEAAB],['其',0xC6E4],['他',0xCBFB],['气',0xC6F8],['囊',0xC4D2],['钥',0xD4BF],
-            ['匙',0xB3D7],['扣',0xBFDB],['支',0xD6A7],['架',0xBCDC],['立',0xC1A2],['牌',0xC5C6],['测',0xB2E2],['试',0xCAD4],['日',0xC8D5],['记',0xBCC7],
-            ['归',0xB9E9],['鞘',0xC7CA],['打',0xB4F2],['卡',0xBFA8],['棒',0xB0F4],['动',0xB6AF],['物',0xCEEF],['贴',0xCCF9],['纸',0xD6BD],['包',0xB0FC],
-            ['甜',0xCCF0],['蜜',0xC3DB],['夏',0xCFC4],['窗',0xB4B0],['便',0xB1E3],['签',0xC7A9],['玦',0xE4B3],['泥',0xC4E0],['屎',0xCABA],['坑',0xB0BC],
-            ['小',0xD0A1],['锦',0xBDF5],['布',0xB2BC],['卷',0xBEED],['轴',0xD6E1],['触',0xB4A5],['银',0xD2F8],['赤',0xB3E0],['兔',0xCDC3],['红',0xBAEC],
-            ['尘',0xB3BE],['里',0xC0EF],['飞',0xB7C9],['沙',0xC9B3],['羁',0xEEBF],['儿',0xB6F9],['的',0xB5C4],['卢',0xC2AC],['踏',0xCCA4],['月',0xD4C2],
-            ['嫂',0xC9A9],['子',0xD7D3],['发',0xB7A2],['将',0xBDAB],['军',0xBEFC],['追',0xD7B7],['魂',0xBBEA],['骨',0xB9C7],['浪',0xC0CB],['风',0xB7E7],
-            ['潮',0xB3B1],['起',0xC6F0],['前',0xC7B0],['传',0xB4AB],['二',0xB6FE],['（',0xA3A8],['）',0xA3A9],['萝',0xC2DC],['狍',0xE1F3],['姐',0xBDE3],
-            ['雪',0xD1A9],['少',0xC9D9],['林',0xC1D6],['打',0xB4F2],['印',0xD3A1],
-            // 新增字符：香、片、黄、蓝、名、望、常
-            ['香',0xCFE3],['片',0xC6AC],['黄',0xBBC6],['蓝',0xC0B6],['名',0xC3FB],['望',0xCDFB],['常',0xB3A3]
-        ]);
-
-        function strToGbkBytes(str) {
-            const result = [];
-            for (let i = 0; i < str.length; i++) {
-                const char = str[i];
-                const code = char.charCodeAt(0);
-                if (code <= 0x7F) { result.push(code); continue; }
-                const gbk = customGbkMap.get(char);
-                if (gbk !== undefined) { result.push((gbk >> 8) & 0xFF, gbk & 0xFF); }
-                else { console.warn(`[打印] 字符 "${char}" 未映射`); result.push(0x20); }
-            }
-            return new Uint8Array(result);
-        }
-
-        function generateReceiptData(orderInfo) {
-            const buffers = [];
-            buffers.push(new Uint8Array([0x1B, 0x40]));
-            buffers.push(new Uint8Array([0x1C, 0x26]));
-            buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
-            buffers.push(strToGbkBytes('《我在猫饭屋想你》'));
-            buffers.push(new Uint8Array([0x0A]));
-            const printTime = new Date();
-            const timeStr = `${printTime.getFullYear()}-${(printTime.getMonth()+1).toString().padStart(2,'0')}-${printTime.getDate().toString().padStart(2,'0')} ${printTime.getHours().toString().padStart(2,'0')}:${printTime.getMinutes().toString().padStart(2,'0')}:${printTime.getSeconds().toString().padStart(2,'0')}`;
-            buffers.push(strToGbkBytes(`打印时间: ${timeStr}`));
-            buffers.push(new Uint8Array([0x0A]));
-            buffers.push(strToGbkBytes('--------------------------------'));
-            buffers.push(new Uint8Array([0x0A]));
-            buffers.push(new Uint8Array([0x1B, 0x61, 0x00]));
-            buffers.push(strToGbkBytes(`订单号: ${orderInfo.orderNo}`));
-            buffers.push(new Uint8Array([0x0A]));
-            buffers.push(strToGbkBytes('--------------------------------'));
-            buffers.push(new Uint8Array([0x0A]));
-            orderInfo.items.forEach(item => {
-                const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
-                buffers.push(strToGbkBytes(`${name} x${item.quantity} ¥${item.total.toFixed(2)}`));
-                buffers.push(new Uint8Array([0x0A]));
-            });
-            buffers.push(strToGbkBytes('--------------------------------'));
-            buffers.push(new Uint8Array([0x0A]));
-            buffers.push(new Uint8Array([0x1B, 0x61, 0x02]));
-            buffers.push(strToGbkBytes(`总计: ¥${orderInfo.total.toFixed(2)}`));
-            buffers.push(new Uint8Array([0x0A]));
-            buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
-            buffers.push(strToGbkBytes('感谢惠顾！'));
-            buffers.push(new Uint8Array([0x0A]));
-            buffers.push(new Uint8Array([0x1D, 0x56, 0x00]));
-            const totalLength = buffers.reduce((sum, buf) => sum + buf.length, 0);
-            const result = new Uint8Array(totalLength);
-            let offset = 0;
-            for (const buf of buffers) { result.set(buf, offset); offset += buf.length; }
-            return result;
-        }
-
-        async function connectPrinter() {
-            if (!navigator.bluetooth) throw new Error('浏览器不支持蓝牙');
-            updateStatus('搜索蓝牙打印机...');
-            try {
-                const device = await navigator.bluetooth.requestDevice({ filters: [{ services: [PRINT_SERVICE_UUID] }] });
-                const server = await device.gatt.connect();
-                const service = await server.getPrimaryService(PRINT_SERVICE_UUID);
-                printerCharacteristic = await service.getCharacteristic(PRINT_CHARACTERISTIC_UUID);
-                updateStatus('✅ 打印机已连接');
-                return printerCharacteristic;
-            } catch {
-                const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: [PRINT_SERVICE_UUID] });
-                const server = await device.gatt.connect();
-                const service = await server.getPrimaryService(PRINT_SERVICE_UUID);
-                printerCharacteristic = await service.getCharacteristic(PRINT_CHARACTERISTIC_UUID);
-                updateStatus('✅ 打印机已连接');
-                return printerCharacteristic;
-            }
-        }
-
-        async function printCurrentCart() {
-            if (!Object.keys(cart).length) { alert('购物车为空'); return; }
-            try {
-                if (!printerCharacteristic) await connectPrinter();
-                let items = [], total = 0;
-                for (let [id, qty] of Object.entries(cart)) {
-                    const p = products.find(p => p.id == id);
-                    if (p) { total += p.price * qty; items.push({ name: p.name, quantity: qty, price: p.price, total: p.price * qty }); }
+            card.addEventListener('touchmove', (e) => {
+                if (!longPressTimer) return;
+                const touch = e.touches[0];
+                if (Math.abs(touch.clientX - touchStartX) > MOVE_THRESHOLD || Math.abs(touch.clientY - touchStartY) > MOVE_THRESHOLD) {
+                    touchMoved = true;
+                    clearLongPressTimer();
                 }
-                const data = generateReceiptData({ orderNo: `预览 #${getDailyOrderNumber().toString().padStart(3,'0')}`, items, total });
-                await printerCharacteristic.writeValue(data);
-                updateStatus('✅ 小票打印成功'); alert('打印指令已发送');
-            } catch (e) { alert('打印失败: ' + e.message); updateStatus('打印失败', true); printerCharacteristic = null; }
-        }
+            }, { passive: false });
 
-        async function printOrderReceipt(order) {
+            card.addEventListener('touchend', (e) => {
+                clearLongPressTimer();
+                if (longPressTriggered) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                } else if (!touchMoved) {
+                    // 短按未移动 → 加入购物车
+                    e.preventDefault();
+                    addToCart(p.id);
+                }
+                // 如果移动了，什么也不做
+            });
+
+            card.addEventListener('touchcancel', () => {
+                clearLongPressTimer();
+            });
+
+            // 桌面端右键
+            card.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                clearLongPressTimer();
+                showContextMenu(e.clientX, e.clientY, p.id);
+            });
+
+            let imgHtml = p.imageUrl ? `<div class="product-image-container"><img class="product-image" src="${p.imageUrl}" onerror="handleImageError(this)"></div>` : `<div class="product-image-container"><div class="no-image">暂无图片</div></div>`;
+            let subTag = p.subCategory ? `<span class="product-sub-tag">${p.subCategory}</span>` : '';
+            card.innerHTML = `<span class="product-stock">库存: ${p.stock}</span><div class="product-tag-container"><span class="product-tag">${p.category}</span>${subTag}</div>${imgHtml}<span class="product-price">¥ ${p.price.toFixed(2)}</span><div class="product-name">${p.name}</div>`;
+            grid.appendChild(card);
+        });
+    }
+
+    // 购物车
+    function renderCart() {
+        const container = document.getElementById('cartItems'); container.innerHTML=''; let total=0, empty=true;
+        for(let [id,qty] of Object.entries(cart)) {
+            if(qty>0) { empty=false; const p=products.find(p=>p.id==id); if(p) { total+=p.price*qty;
+                const item=document.createElement('div'); item.className='cart-item';
+                item.innerHTML=`<div class="cart-item-info"><div class="cart-item-name">${p.name}</div><div class="cart-item-price">¥ ${p.price.toFixed(2)} x ${qty}</div></div><div class="cart-controls"><button class="qty-btn" onclick="updateQty(${id},-1)">-</button><span>${qty}</span><button class="qty-btn" onclick="updateQty(${id},1)">+</button></div>`;
+                container.appendChild(item);
+            }}
+        }
+        if(empty) container.innerHTML='<div style="text-align:center;color:#999;margin-top:50px;">购物车为空</div>';
+        document.getElementById('totalAmount').innerText = `¥ ${total.toFixed(2)}`;
+    }
+    function addToCart(id) { const p=products.find(p=>p.id===id); if(!p) return; if(p.stock<=0) { alert(`"${p.name}" 库存不足`); return; } cart[id] = (cart[id]||0)+1; renderCart(); }
+    function updateQty(id, ch) {
+        if(cart[id]) { cart[id]+=ch; if(cart[id]<=0) delete cart[id]; else { const p=products.find(p=>p.id==id); if(p && cart[id]>p.stock) { cart[id]=p.stock; alert(`库存只有 ${p.stock} 个`); } } renderCart(); }
+    }
+    function clearCart() { if(Object.keys(cart).length===0) { alert('购物车已经是空的'); return; } if(confirm('清空购物车？')) { cart={}; renderCart(); } }
+
+    // 订单
+    function checkout() {
+        if(Object.keys(cart).length===0) { alert('购物车是空的'); return; }
+        for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p && qty>p.stock) { alert(`"${p.name}" 库存不足`); return; } }
+        const list=document.getElementById('confirmList'); list.innerHTML=''; let total=0;
+        for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { total+=p.price*qty; const d=document.createElement('div'); d.style.display='flex'; d.style.justifyContent='space-between'; d.innerHTML=`<span>${p.name} x${qty}</span><span>¥ ${(p.price*qty).toFixed(2)}</span>`; list.appendChild(d); } }
+        document.getElementById('confirmTotal').innerText=`¥ ${total.toFixed(2)}`;
+        document.getElementById('orderSuccessMessage').style.display='none';
+        openModal('confirmModal');
+    }
+    async function processOrder() {
+        document.getElementById('orderSuccessMessage').style.display='block';
+        let total=0, items=[];
+        for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { const it=p.price*qty; total+=it; items.push({productId:p.id, name:p.name, quantity:qty, price:p.price, total:it}); } }
+        const now = new Date();
+        const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+        const dailySeq = getDailyOrderNumber();
+        const orderNo = `#${dailySeq.toString().padStart(3, '0')}`;
+        saveDailyOrderNumber(dailySeq);
+        const order = { id:orderCounter, orderNo, time:timeStr, items, total };
+        orders.unshift(order); orderCounter++;
+        for(let [id,qty] of Object.entries(cart)) { const p=products.find(p=>p.id==id); if(p) { p.stock-=qty; if(p.stock<0) p.stock=0; } }
+        saveToStorage(); renderProducts(currentFilterMain, currentFilterSub);
+        if(firebaseInitialized) { try { await syncProductsToFirebase(); const { ref, push, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(push(ref(firebaseDb, 'orders')), { orderNo, time:timeStr, items, total, status:'completed' }); } catch(e) {} }
+        closeModal('confirmModal');
+        cart = {};
+        renderCart();
+        alert(`订单 ${orderNo} 提交成功！`);
+        try { await printOrderReceipt(order); } catch(e) { updateStatus('打印失败，可手动重试', true); }
+    }
+    function showOrders() {
+        const tbody = document.querySelector('#ordersTable tbody'); tbody.innerHTML='';
+        if(orders.length===0) { tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#999;">暂无订单</td></tr>'; document.getElementById('orderCount').textContent='0'; return; }
+        orders.forEach(o=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${o.orderNo}</td><td>${o.time}</td><td>${o.items.reduce((s,i)=>s+i.quantity,0)} 件</td><td>¥ ${o.total.toFixed(2)}</td><td><button onclick="viewOrderDetails(${o.id})">查看</button></td>`; tbody.appendChild(tr); });
+        document.getElementById('orderCount').textContent=orders.length;
+    }
+    function viewOrderDetails(id) { const o=orders.find(o=>o.id===id); if(!o) return; let det=`订单号:${o.orderNo}\n时间:${o.time}\n`; o.items.forEach(i=>det+=`${i.name} x${i.quantity} ¥${i.total.toFixed(2)}\n`); det+=`合计:¥${o.total.toFixed(2)}`; alert(det); }
+
+    // 商品管理
+    function updateCategorySelects(mainId, subId, selMain='', selSub='') {
+        const main=document.getElementById(mainId); if(!main) return; main.innerHTML=''; 
+        categoryData.forEach(c=>{ const opt=document.createElement('option'); opt.value=c.name; opt.textContent=c.name; if(c.name===selMain) opt.selected=true; main.appendChild(opt); });
+        updateSubCatSelect(mainId, subId, selSub);
+    }
+    function updateSubCatSelect(mainId, subId, selSub='') {
+        const main=document.getElementById(mainId), sub=document.getElementById(subId);
+        if(!main || !sub) return;
+        const cat=categoryData.find(c=>c.name===main.value); sub.innerHTML='<option value="">无子分类</option>';
+        if(cat && cat.subs) cat.subs.forEach(s=>{ const opt=document.createElement('option'); opt.value=s; opt.textContent=s; if(s===selSub) opt.selected=true; sub.appendChild(opt); });
+    }
+    async function addProduct() {
+        const name=document.getElementById('newProdName').value.trim(), cat=document.getElementById('newProdCat').value, sub=document.getElementById('newProdSubCat').value;
+        const img=document.getElementById('newProdImageUrl').value.trim(), price=parseFloat(document.getElementById('newProdPrice').value), stock=parseInt(document.getElementById('newProdStock').value);
+        if(!name) { alert('请输入商品名称'); return; } if(isNaN(price)||price<=0) { alert('价格无效'); return; } if(isNaN(stock)||stock<0) { alert('库存无效'); return; }
+        const exist=products.find(p=>p.name.toLowerCase()===name.toLowerCase());
+        if(exist) { if(confirm(`"${name}"已存在，更新库存？`)) { exist.stock+=stock; saveToStorage(); renderProducts(); closeModal('addModal'); if(firebaseInitialized) await syncProductsToFirebase(); } return; }
+        const newId = products.length ? Math.max(...products.map(p=>p.id))+1 : 1;
+        products.push({ id:newId, name, category:cat, subCategory:sub, imageUrl:img, price, stock });
+        saveToStorage(); renderProducts(); closeModal('addModal');
+        ['newProdName','newProdImageUrl','newProdPrice'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('newProdStock').value='10'; document.getElementById('newProdImagePreview').style.display='none';
+        document.getElementById('addSearchInput').value = '';
+        document.getElementById('addSearchResults').classList.remove('visible');
+        document.getElementById('addExactMatch').classList.remove('visible');
+        if(firebaseInitialized) await syncProductsToFirebase();
+    }
+    function updateManageTable() {
+        const tbody=document.querySelector('#manageTable tbody'); tbody.innerHTML='';
+        if(!products.length) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center;">暂无商品</td></tr>'; document.getElementById('productCount').textContent='0'; return; }
+        products.forEach(p=>{
+            const tr=document.createElement('tr'); let catD=p.category+(p.subCategory?` / ${p.subCategory}`:'');
+            let imgCell='<td>无图片</td>'; if(p.imageUrl) imgCell=`<td><div style="width:40px;height:40px;"><img src="${p.imageUrl}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='图片失效'"></div></td>`;
+            tr.innerHTML=`<td>${p.id}</td><td>${p.name}</td>${imgCell}<td>${catD}</td><td>¥${p.price.toFixed(2)}</td><td>${p.stock}</td><td><button onclick="deleteProduct(${p.id})">删除</button> <button onclick="editProduct(${p.id})">编辑</button></td>`;
+            tbody.appendChild(tr);
+        });
+        document.getElementById('productCount').textContent=products.length;
+    }
+    async function deleteProduct(id) {
+        const p=products.find(p=>p.id===id); if(!p) return; if(!confirm(`删除 "${p.name}"？`)) return;
+        products=products.filter(p=>p.id!==id); if(cart[id]) delete cart[id];
+        saveToStorage(); renderProducts(); renderCart(); updateManageTable();
+        if(firebaseInitialized) await syncProductsToFirebase();
+        hideContextMenu();
+    }
+    function editProduct(id) {
+        const p=products.find(p=>p.id===id); if(!p) return;
+        document.getElementById('editProdId').value=id; document.getElementById('editProdName').value=p.name;
+        document.getElementById('editProdImageUrl').value=p.imageUrl||''; document.getElementById('editProdPrice').value=p.price;
+        document.getElementById('editProdStock').value=p.stock;
+        updateCategorySelects('editProdCat','editProdSubCat', p.category, p.subCategory||'');
+        const prev=document.getElementById('editProdImagePreview'); if(p.imageUrl) { prev.src=p.imageUrl; prev.style.display='block'; } else prev.style.display='none';
+        openModal('editModal');
+        hideContextMenu();
+    }
+    async function saveEditedProduct() {
+        const id=parseInt(document.getElementById('editProdId').value), name=document.getElementById('editProdName').value.trim();
+        const cat=document.getElementById('editProdCat').value, sub=document.getElementById('editProdSubCat').value;
+        const img=document.getElementById('editProdImageUrl').value.trim(), price=parseFloat(document.getElementById('editProdPrice').value), stock=parseInt(document.getElementById('editProdStock').value);
+        if(!name||isNaN(price)||price<=0||isNaN(stock)||stock<0) { alert('信息不完整'); return; }
+        const p=products.find(p=>p.id===id); if(!p) return;
+        if(products.some(x=>x.id!==id && x.name.toLowerCase()===name.toLowerCase())) { alert('名称重复'); return; }
+        Object.assign(p, { name, category:cat, subCategory:sub, imageUrl:img, price, stock });
+        saveToStorage(); renderProducts(); renderCart(); updateManageTable();
+        if(firebaseInitialized) await syncProductsToFirebase();
+        closeModal('editModal');
+    }
+
+    // 分类管理
+    function renderManageCatList() {
+        const list=document.getElementById('manageCatList'); list.innerHTML='';
+        categoryData.forEach((c,i)=>{ const d=document.createElement('div'); d.className=`cat-manage-item ${selectedManageCatIndex===i?'selected':''}`; d.innerText=c.name; d.onclick=()=>{ selectedManageCatIndex=i; renderManageCatList(); renderManageSubCatList(i); }; list.appendChild(d); });
+    }
+    function renderManageSubCatList(idx) {
+        const cat=categoryData[idx]; document.getElementById('subCatManageArea').style.display='block';
+        document.getElementById('selectedCatName').innerText=cat.name; const list=document.getElementById('manageSubCatList'); list.innerHTML='';
+        if(!cat.subs||!cat.subs.length) list.innerHTML='<span>无子分类</span>';
+        else cat.subs.forEach((s,i)=>{ const chip=document.createElement('div'); chip.className='sub-cat-chip'; chip.innerHTML=`${s} <span onclick="deleteSubCategory(${idx},${i})" style="cursor:pointer;color:red;">×</span>`; list.appendChild(chip); });
+    }
+    async function addMainCategory() {
+        const name=document.getElementById('newCatNameInput').value.trim(); if(!name) return;
+        if(categoryData.some(c=>c.name===name)) { alert('已存在'); return; }
+        categoryData.push({ name, subs:[] }); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase();
+        renderManageCatList(); renderCategoryFilters(); document.getElementById('newCatNameInput').value='';
+    }
+    async function deleteSelectedMainCategory() {
+        if(selectedManageCatIndex===-1) return; const cat=categoryData[selectedManageCatIndex];
+        if(products.some(p=>p.category===cat.name)) { alert('有商品使用此分类，无法删除'); return; }
+        if(confirm(`删除 "${cat.name}"？`)) { categoryData.splice(selectedManageCatIndex,1); selectedManageCatIndex=-1; document.getElementById('subCatManageArea').style.display='none'; saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageCatList(); renderCategoryFilters(); }
+    }
+    async function addSubCategory() {
+        if(selectedManageCatIndex===-1) return; const name=document.getElementById('newSubCatNameInput').value.trim(); if(!name) return;
+        const cat=categoryData[selectedManageCatIndex]; if(!cat.subs) cat.subs=[];
+        if(cat.subs.includes(name)) { alert('已存在'); return; }
+        cat.subs.push(name); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase();
+        renderManageSubCatList(selectedManageCatIndex); renderCategoryFilters(); document.getElementById('newSubCatNameInput').value='';
+    }
+    async function deleteSubCategory(catIdx, subIdx) {
+        event.stopPropagation(); const cat=categoryData[catIdx], sub=cat.subs[subIdx];
+        if(products.some(p=>p.category===cat.name && p.subCategory===sub)) { alert('有商品使用此子分类'); return; }
+        if(confirm(`删除 "${sub}"？`)) { cat.subs.splice(subIdx,1); saveToStorage(); if(firebaseInitialized) await syncCategoriesToFirebase(); renderManageSubCatList(catIdx); renderCategoryFilters(); }
+    }
+
+    // 搜索功能（添加商品界面）
+    function setupSearchListener() {
+        const input = document.getElementById('addSearchInput');
+        if (!input) return;
+        input.addEventListener('input', () => {
+            const query = input.value.trim().toLowerCase();
+            const resultsDiv = document.getElementById('addSearchResults');
+            const exactDiv = document.getElementById('addExactMatch');
+            if (query.length === 0) {
+                resultsDiv.classList.remove('visible');
+                exactDiv.classList.remove('visible');
+                return;
+            }
+            const matches = products.filter(p => p.name.toLowerCase().includes(query));
+            const exact = products.find(p => p.name.toLowerCase() === query);
+            if (exact) {
+                exactDiv.classList.add('visible');
+                exactDiv.textContent = `⚠️ 商品"${exact.name}"已存在（¥${exact.price.toFixed(2)}，库存${exact.stock}），点击编辑`;
+                exactDiv.onclick = () => { closeModal('addModal'); editProduct(exact.id); };
+            } else {
+                exactDiv.classList.remove('visible');
+            }
+            if (matches.length > 0) {
+                resultsDiv.classList.add('visible');
+                resultsDiv.innerHTML = '';
+                matches.slice(0, 8).forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'search-result-item';
+                    item.innerHTML = `${p.name} <span style="color:#999;font-size:0.8rem;">¥${p.price.toFixed(2)}</span>`;
+                    item.addEventListener('click', () => { closeModal('addModal'); editProduct(p.id); });
+                    resultsDiv.appendChild(item);
+                });
+            } else {
+                resultsDiv.classList.add('visible');
+                resultsDiv.innerHTML = '<div style="padding:10px;text-align:center;color:#999;">未找到匹配商品，将创建新商品</div>';
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#addSearchInput') && !e.target.closest('#addSearchResults') && !e.target.closest('#addExactMatch')) {
+                document.getElementById('addSearchResults').classList.remove('visible');
+                document.getElementById('addExactMatch').classList.remove('visible');
+            }
+        });
+    }
+
+    // 数据导入导出
+    function exportData() {
+        const data = { products, orders, orderCounter, categories: categoryData, exportTime: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `猫屎宝数据_${new Date().toISOString().slice(0,10)}.json`; a.click();
+    }
+    function importData() {
+        const inp = document.createElement('input'); inp.type='file'; inp.accept='.json';
+        inp.onchange = async (e) => {
+            const file = e.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if(!data.products || !Array.isArray(data.products)) { alert('格式错误'); return; }
+                    if(confirm(`导入 ${data.products.length} 个商品？`)) {
+                        products = data.products; orders = data.orders || []; orderCounter = data.orderCounter || 1;
+                        categoryData = data.categories || DEFAULT_CATEGORIES;
+                        products.forEach(p=>{ if(!p.imageUrl) p.imageUrl=''; });
+                        saveToStorage(); renderCategoryFilters(); renderProducts();
+                        if(firebaseInitialized) { await syncProductsToFirebase(); await syncCategoriesToFirebase(); }
+                    }
+                } catch(ex) { alert('导入失败'); }
+            };
+            reader.readAsText(file);
+        };
+        inp.click();
+    }
+    async function clearAllData() {
+        if(!confirm('清空所有数据？不可恢复！')) return;
+        if(!confirm('再次确认清空？')) return;
+        products=[]; orders=[]; cart={}; orderCounter=1; categoryData=JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+        saveToStorage(); renderCategoryFilters(); renderProducts(); renderCart();
+        if(firebaseInitialized) { const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js"); await set(ref(firebaseDb, 'products'), {}); await set(ref(firebaseDb, 'categories'), categoryData); }
+    }
+    async function manualSyncToFirebase() { if(!firebaseInitialized) return alert('Firebase未连接'); await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成'); }
+
+    // ==================== GBK 打印模块（包含新增汉字） ====================
+    const customGbkMap = new Map([
+        ['《', 0xA1B6], ['我', 0xCED2], ['在', 0xD4DA], ['猫', 0xC3A8], ['饭', 0xB7B9], ['屋', 0xCEDD],
+        ['很', 0xBAD4], ['想', 0xCFEB], ['你', 0xC4E3], ['》', 0xA1B7],
+        ['订', 0xB6A9], ['单', 0xB5A5], ['号', 0xBAC5], ['时', 0xCAB1], ['间', 0xBCE4],
+        ['感', 0xB8D0], ['谢', 0xD0BB], ['惠', 0xBBDD], ['顾', 0xB9CB], ['！', 0xA3A1],
+        ['总', 0xD7DC], ['计', 0xBCC6], ['：', 0xA3BA], ['#', 0x23],
+        ['万', 0xCDF2], ['花', 0xBBA8], ['天', 0xCCEC], ['策', 0xB2DF], ['纯', 0xB4BF],
+        ['阳', 0xD1F4], ['七', 0xC6DF], ['秀', 0xD0E3], ['藏', 0xB2D8], ['剑', 0xBDA3],
+        ['五', 0xCEE5], ['毒', 0xB6BE], ['唐', 0xCCC6], ['门', 0xC3C5], ['明', 0xC3F7],
+        ['教', 0xBDCC], ['丐', 0xD8A4], ['帮', 0xB0EF], ['苍', 0xB2D4], ['云', 0xD4C6],
+        ['长', 0xB3A4], ['歌', 0xB8E8], ['霸', 0xB0D4], ['刀', 0xB5B6], ['蓬', 0xC5EE],
+        ['莱', 0xC0B3], ['凌', 0xC1E8], ['霄', 0xCFF6], ['阁', 0xB8F3], ['衍', 0xD1DC],
+        ['宗', 0xD7DA], ['北', 0xB1B1], ['药', 0xD2A9], ['灵', 0xC1E9], ['山', 0xC9BD],
+        ['庄', 0xD7AF], ['生', 0xC9FA], ['一', 0xD2BB], ['枪', 0xC7B9], ['晨', 0xB3BF],
+        ['曦', 0xEAAB], ['其', 0xC6E4], ['他', 0xCBFB], ['气', 0xC6F8], ['囊', 0xC4D2],
+        ['钥', 0xD4BF], ['匙', 0xB3D7], ['扣', 0xBFDB], ['支', 0xD6A7], ['架', 0xBCDC],
+        ['立', 0xC1A2], ['牌', 0xC5C6], ['测', 0xB2E2], ['试', 0xCAD4],
+        ['日', 0xC8D5], ['记', 0xBCC7], ['归', 0xB9E9], ['鞘', 0xC7CA], ['打', 0xB4F2],
+        ['卡', 0xBFA8], ['棒', 0xB0F4], ['动', 0xB6AF], ['物', 0xCEEF], ['贴', 0xCCF9],
+        ['纸', 0xD6BD], ['包', 0xB0FC], ['甜', 0xCCF0], ['蜜', 0xC3DB], ['夏', 0xCFC4],
+        ['窗', 0xB4B0], ['便', 0xB1E3], ['签', 0xC7A9], ['玦', 0xE4B3], ['泥', 0xC4E0],
+        ['屎', 0xCABA], ['坑', 0xB0BC], ['小', 0xD0A1], ['猫', 0xC3A8], ['饭', 0xB7B9], ['屋', 0xCEDD],
+        ['锦', 0xBDF5],['布', 0xB2BC],['卷', 0xBEED],['轴', 0xD6E1],['触', 0xB4A5],['银', 0xD2F8],
+        ['赤', 0xB3E0],['兔', 0xCDC3],['红', 0xBAEC],['尘', 0xB3BE],['里', 0xC0EF],['飞', 0xB7C9],['沙', 0xC9B3],
+        ['羁', 0xEEBF],['儿', 0xB6F9],['的', 0xB5C4],['卢', 0xC2AC],['踏', 0xCCA4],['月', 0xD4C2],
+        ['嫂', 0xC9A9],['子', 0xD7D3],['发', 0xB7A2],['将', 0xBDAB],['军', 0xBEFC],['追', 0xD7B7],
+        ['魂', 0xBBEA],['骨', 0xB9C7], ['浪', 0xC0CB],['风', 0xB7E7],['潮', 0xB3B1],
+        ['起', 0xC6F0],['前', 0xC7B0],['传', 0xB4AB], ['二', 0xB6FE], ['（', 0xA3A8],['）', 0xA3A9],
+        ['萝', 0xC2DC],['狍', 0xE1F3],['姐', 0xBDE3], ['雪', 0xD1A9], ['少', 0xC9D9],['林', 0xC1D6],
+        ['香', 0xCFE3],['片', 0xC6AC],['黄', 0xBBC6],['蓝', 0xC0B6],['名', 0xC3FB],['望', 0xCDFB],['常', 0xB3A3]
+    ]);
+
+    function strToGbkBytes(str) {
+        const result = [];
+        for (let i = 0; i < str.length; i++) {
+            const char = str[i];
+            const code = char.charCodeAt(0);
+            if (code <= 0x7F) { result.push(code); continue; }
+            const gbk = customGbkMap.get(char);
+            if (gbk !== undefined) {
+                result.push((gbk >> 8) & 0xFF, gbk & 0xFF);
+            } else {
+                console.warn(`[打印] 字符 "${char}" 未映射，已替换为空格`);
+                result.push(0x20);
+            }
+        }
+        return new Uint8Array(result);
+    }
+
+    function generateReceiptData(orderInfo) {
+        const buffers = [];
+        buffers.push(new Uint8Array([0x1B, 0x40]));
+        buffers.push(new Uint8Array([0x1C, 0x26]));
+        buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
+        buffers.push(strToGbkBytes('《我在猫饭屋想你》'));
+        buffers.push(new Uint8Array([0x0A]));
+        const printTime = new Date();
+        const timeStr = `${printTime.getFullYear()}-${(printTime.getMonth()+1).toString().padStart(2,'0')}-${printTime.getDate().toString().padStart(2,'0')} ${printTime.getHours().toString().padStart(2,'0')}:${printTime.getMinutes().toString().padStart(2,'0')}:${printTime.getSeconds().toString().padStart(2,'0')}`;
+        buffers.push(strToGbkBytes(`打印时间: ${timeStr}`));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(strToGbkBytes('--------------------------------'));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(new Uint8Array([0x1B, 0x61, 0x00]));
+        buffers.push(strToGbkBytes(`订单号: ${orderInfo.orderNo}`));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(strToGbkBytes('--------------------------------'));
+        buffers.push(new Uint8Array([0x0A]));
+        orderInfo.items.forEach(item => {
+            const name = item.name.length > 10 ? item.name.substring(0, 8) + '..' : item.name;
+            const line = `${name} x${item.quantity} ¥${item.total.toFixed(2)}`;
+            buffers.push(strToGbkBytes(line));
+            buffers.push(new Uint8Array([0x0A]));
+        });
+        buffers.push(strToGbkBytes('--------------------------------'));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(new Uint8Array([0x1B, 0x61, 0x02]));
+        buffers.push(strToGbkBytes(`总计: ¥${orderInfo.total.toFixed(2)}`));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(new Uint8Array([0x1B, 0x61, 0x01]));
+        buffers.push(strToGbkBytes('感谢惠顾！'));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(strToGbkBytes(' '));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(strToGbkBytes(' '));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(strToGbkBytes(' '));
+        buffers.push(new Uint8Array([0x0A]));
+        buffers.push(new Uint8Array([0x1D, 0x56, 0x00]));
+        const totalLength = buffers.reduce((sum, buf) => sum + buf.length, 0);
+        const result = new Uint8Array(totalLength);
+        let offset = 0;
+        for (const buf of buffers) { result.set(buf, offset); offset += buf.length; }
+        return result;
+    }
+
+    async function connectPrinter() {
+        if (!navigator.bluetooth) throw new Error('浏览器不支持Web Bluetooth');
+        updateStatus('搜索蓝牙打印机...');
+        try {
+            const device = await navigator.bluetooth.requestDevice({ filters: [{ services: [PRINT_SERVICE_UUID] }], optionalServices: [PRINT_SERVICE_UUID] });
+            const server = await device.gatt.connect();
+            const service = await server.getPrimaryService(PRINT_SERVICE_UUID);
+            printerCharacteristic = await service.getCharacteristic(PRINT_CHARACTERISTIC_UUID);
+            updateStatus('✅ 打印机已连接');
+            return printerCharacteristic;
+        } catch {
+            updateStatus('尝试通用连接...');
+            const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: [PRINT_SERVICE_UUID] });
+            const server = await device.gatt.connect();
+            const service = await server.getPrimaryService(PRINT_SERVICE_UUID);
+            printerCharacteristic = await service.getCharacteristic(PRINT_CHARACTERISTIC_UUID);
+            updateStatus('✅ 打印机已连接 (通用)');
+            return printerCharacteristic;
+        }
+    }
+
+    async function printCurrentCart() {
+        if (!Object.keys(cart).length) { alert('购物车为空'); return; }
+        try {
+            if (!printerCharacteristic) await connectPrinter();
+            let items = [], total = 0;
+            for (let [id, qty] of Object.entries(cart)) {
+                const p = products.find(p => p.id == id);
+                if (p) { const t = p.price * qty; total += t; items.push({ name: p.name, quantity: qty, price: p.price, total: t }); }
+            }
+            const tempOrderNo = `预览 #${getDailyOrderNumber().toString().padStart(3, '0')}`;
+            const data = generateReceiptData({ orderNo: tempOrderNo, items, total });
+            await printerCharacteristic.writeValue(data);
+            updateStatus('✅ 小票打印成功'); alert('打印指令已发送');
+        } catch (e) { alert('打印失败: ' + e.message); updateStatus('打印失败', true); printerCharacteristic = null; }
+    }
+
+    async function printOrderReceipt(order) {
+        try {
             if (!printerCharacteristic) await connectPrinter();
             const data = generateReceiptData(order);
             await printerCharacteristic.writeValue(data);
             updateStatus('✅ 订单打印成功');
             return true;
-        }
+        } catch (e) { updateStatus('打印失败', true); throw e; }
+    }
 
-        // ==================== Firebase ====================
-        async function initializeFirebase() {
-            try {
-                updateStatus('正在连接数据库...');
-                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js");
-                const { getDatabase, ref, onValue } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js");
-                const app = initializeApp(FIREBASE_CONFIG, "cat_shit_bao");
-                firebaseDb = getDatabase(app);
-                firebaseInitialized = true;
-                onValue(ref(firebaseDb, 'products'), snap => {
-                    const data = snap.val(); if (data) { products = Object.values(data); products.forEach(p => { if (!p.imageUrl) p.imageUrl = ''; }); saveToStorage(); renderProducts(currentFilterMain, currentFilterSub); }
-                });
-                onValue(ref(firebaseDb, 'categories'), snap => {
-                    const data = snap.val(); if (data && Array.isArray(data)) { categoryData = data; saveToStorage(); renderCategoryFilters(); }
-                });
-                updateStatus('Firebase连接成功');
-            } catch (e) { updateStatus('Firebase连接失败，使用本地模式', true); }
+    // 初始化
+    async function initApp() {
+        showLoading();
+        if (!loadFromStorage()) {
+            products = [ { id:1, name:'刀宗吧唧', category:'吧唧', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FF9A9E/FFFFFF?text=刀宗吧唧', price:8, stock:20 }, { id:2, name:'手机支架', category:'亚克力', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FAD0C4/FFFFFF?text=支架', price:35, stock:4 } ];
+            saveToStorage();
         }
-        async function syncProductsToFirebase() {
-            if (!firebaseInitialized) return;
-            const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js");
-            const obj = {}; products.forEach(p => obj[p.id] = p);
-            await set(ref(firebaseDb, 'products'), obj);
-        }
-        async function syncCategoriesToFirebase() {
-            if (!firebaseInitialized) return;
-            const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js");
-            await set(ref(firebaseDb, 'categories'), categoryData);
-        }
-        async function manualSyncToFirebase() {
-            if (!firebaseInitialized) return alert('Firebase未连接');
-            await syncProductsToFirebase(); await syncCategoriesToFirebase(); alert('同步完成');
-        }
-
-        // ==================== 初始化 ====================
-        async function initApp() {
-            if (!loadFromStorage()) {
-                products = [
-                    { id:1, name:'刀宗吧唧', category:'吧唧', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FF9A9E/FFFFFF?text=刀宗吧唧', price:8, stock:20 },
-                    { id:2, name:'手机支架', category:'亚克力', subCategory:'', imageUrl:'https://via.placeholder.com/200x200/FAD0C4/FFFFFF?text=支架', price:35, stock:4 }
-                ];
-                saveToStorage();
-            }
-            categoryData.forEach(c => { if (!c.subs) c.subs = []; });
-            setTimeout(async () => { await initializeFirebase(); if (products.length && firebaseInitialized) { await syncProductsToFirebase(); await syncCategoriesToFirebase(); } }, 1000);
-            renderCategoryFilters(); renderProducts(); renderCart();
-            setupAddSearchListener();
-            updateStatus(`已加载 ${products.length} 个商品`);
-        }
-
-        window.addEventListener('DOMContentLoaded', () => setTimeout(initApp, 300));
-        window.addEventListener('click', e => { if (!e.target.closest('.context-menu') && !e.target.closest('.product-card')) hideContextMenu(); });
-        window.addEventListener('scroll', hideContextMenu, { passive: true });
-
-        // 暴露全局函数
-        window.addProduct = addProduct; window.editProduct = editProduct; window.saveEditedProduct = saveEditedProduct;
-        window.deleteProduct = deleteProduct; window.clearCart = clearCart; window.checkout = checkout;
-        window.processOrder = processOrder; window.showOrders = showOrders; window.viewOrderDetails = viewOrderDetails;
-        window.updateQty = updateQty; window.printCurrentCart = printCurrentCart;
-        window.exportData = exportData; window.importData = importData; window.clearAllData = clearAllData;
-        window.manualSyncToFirebase = manualSyncToFirebase;
-        window.addMainCategory = addMainCategory; window.addSubCategory = addSubCategory;
-        window.deleteSelectedMainCategory = deleteSelectedMainCategory; window.deleteSubCategory = deleteSubCategory;
-        window.updateSubCatSelect = updateSubCatSelect; window.previewImage = previewImage;
-        window.openModal = openModal; window.closeModal = closeModal; window.handleImageError = handleImageError;
-    })();
+        categoryData.forEach(c => { if (!c.subs) c.subs = []; });
+        setTimeout(async () => {
+            await initializeFirebase();
+            if (products.length && firebaseInitialized) { await syncProductsToFirebase(); await syncCategoriesToFirebase(); }
+        }, 1000);
+        renderCategoryFilters(); renderProducts(); renderCart();
+        setupSearchListener();
+        updateStatus(`已加载 ${products.length} 个商品`);
+    }
+    document.addEventListener('DOMContentLoaded', () => setTimeout(initApp, 300));
 </script>
 </body>
 </html>
